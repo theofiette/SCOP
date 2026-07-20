@@ -7,20 +7,24 @@
 #include <string.h>
 
 
-const char *vertexShaderSource = "#version 440 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\n";
+// const char *vertexShaderSource = "#version 440 core\n"
+// "layout (location = 0) in vec3 aPos;\n"
+// "layout (location = 1) in vec3 aColor;\n"
+// "out vec3 vertexColor;\n"
+// "void main()\n"
+// "{\n"
+// "	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+// "	vertexColor = aColor;"
+// "}\n";
 
 
-const char *fragmentShaderSource = "#version 440 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\n";
+// const char *fragmentShaderSource = "#version 440 core\n"
+// "in vec3 vertexColor;\n"
+// "out vec4 FragColor;\n"
+// "void main()\n"
+// "{\n"
+// "	FragColor = vec4(vertexColor, 1.0);\n"
+// "}\n";
 
 
 void _on_window_resize(GLFWwindow* window, int width, int height) {
@@ -52,36 +56,6 @@ void _process_render(GLFWwindow* window) {
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-}
-
-void checkShaderCompil(unsigned int shaderID, std::string str_id) {
-	
-	int success;
-	char infoLog[512];
-
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::COMPILATION::FAILED::" << str_id << "\n" << infoLog << std::endl;
-		
-		clean_exit(true, 1);
-	}
-}
-
-void checkProgramLink(unsigned int programID, std::string str_id) {
-	
-	int success;
-	char infoLog[512];
-
-	glGetProgramiv(programID, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(programID, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::LINKAGE::FAILED::" << str_id << "\n" << infoLog << std::endl;
-		
-		clean_exit(true, 1);
-	}
 }
 
 GLFWwindow* instanciate_window()
@@ -120,9 +94,9 @@ int main() {
 
 
 	float vertices[] = {
-		-0.5f,	-0.5f,	0.0f,
-		0.5f,	-0.5f,	0.0f,
-		0.0f,	0.5f,	0.0f
+		-0.5f,	-0.5f,	0.0f,	/*color*/	1.0f,	0.0f,	0.0f,
+		0.5f,	-0.5f,	0.0f,				0.0f,	1.0f,	0.0f,
+		0.0f,	0.5f,	0.0f,				0.0f,	0.0f,	1.0f
 	};
 
 	float rect_vertices[] = {
@@ -138,37 +112,44 @@ int main() {
 	};
 	
 	// Creating the vertex shader
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER); // creating shader object of type VERTEX SHADER
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL); // attach the code to the shader object
-	glCompileShader(vertexShader); // compiling
 
-	checkShaderCompil(vertexShader, "VERTEX_SHADER");
+	Shader	shader("/home/tfiette/42/POST_COMMON_CORE/SCOP/personal_git/src/SHADERS/shader.vert",
+					 "/home/tfiette/42/POST_COMMON_CORE/SCOP/personal_git/src/SHADERS/shader.frag");
+	
+	// shader.setUniform<float>("vertexColor", 0.5f);
+	shader.use();
 
-	// Creating the fragment shader
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
+	// unsigned int vertexShader;
+	// vertexShader = glCreateShader(GL_VERTEX_SHADER); // creating shader object of type VERTEX SHADER
+	// glShaderSource(vertexShader, 1, &vertexShaderSource, NULL); // attach the code to the shader object
+	// glCompileShader(vertexShader); // compiling
 
-	checkShaderCompil(fragmentShader, "FRAGMENT_SHADER");
+	// // checkShaderCompil(vertexShader, "VERTEX_SHADER");
 
-	// Linking the vertex shader and the fragment shader into a shader program
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	// // Creating the fragment shader
+	// unsigned int fragmentShader;
+	// fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	// glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	// glCompileShader(fragmentShader);
 
-	checkProgramLink(shaderProgram, "SHADER_PROGRAM");
+	// // checkShaderCompil(fragmentShader, "FRAGMENT_SHADER");
 
-	// Deleting shader Objects we don't need anymore
+	// // Linking the vertex shader and the fragment shader into a shader program
+	// unsigned int shaderProgram;
+	// shaderProgram = glCreateProgram();
+	// glAttachShader(shaderProgram, vertexShader);
+	// glAttachShader(shaderProgram, fragmentShader);
+	// glLinkProgram(shaderProgram);
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	// // checkProgramLink(shaderProgram, "SHADER_PROGRAM");
 
-	// Render is done through this pipeline
-	glUseProgram(shaderProgram);
+	// // Deleting shader Objects we don't need anymore
+
+	// glDeleteShader(vertexShader);
+	// glDeleteShader(fragmentShader);
+
+	// // Render is done through this pipeline
+	// glUseProgram(shaderProgram);
 
 	///////
 
@@ -186,8 +167,10 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // copy vertices data in the buffer
 
 	// Tell OpenGL how to interpret the vertex data (for the vertex shader)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 	
 	// ---
 
@@ -211,15 +194,25 @@ int main() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rect_indices), rect_indices, GL_STATIC_DRAW);
 
 	// Tell OpenGL how to interpret the vertex data (for the vertex shader)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	
 
 	while (!glfwWindowShouldClose(window)) {
 		
 		_process_inputs(window);
 		_process_render(window);
+
+		// // Updating the color uniform
+
+		// glUseProgram(shaderProgram);
+		// float timeValue = glfwGetTime() * 4.0f;
+		// float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		// int vertexColorLocation = glGetUniformLocation(shaderProgram, "vertexColor");
+		// glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
 		//// should be in render loop
 
@@ -228,8 +221,8 @@ int main() {
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// To draw the rectangle
-		glBindVertexArray(VAO_rectangle);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		// glBindVertexArray(VAO_rectangle);
+		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
 		glfwSwapBuffers(window);

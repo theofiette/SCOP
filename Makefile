@@ -6,6 +6,7 @@ INCLUDES= -Iinclude
 BUILD= .build/
 
 CPPSRC =	src/main.cpp \
+			src/Shader.cpp \
 			src/exit.cpp
 			
 CSRC   = src/glad.c
