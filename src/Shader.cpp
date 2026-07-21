@@ -125,6 +125,7 @@ Shader &Shader::operator=(const Shader &other)
 
 Shader::~Shader()
 {
+	glDeleteProgram(_ID);
 	std::cout
 		<< "Destructor called for class Shader" << std::endl;
 }

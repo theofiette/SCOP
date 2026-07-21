@@ -30,9 +30,9 @@ class Shader
 
 		// Orthodox Canonical Form
 					Shader(const char* vertexPath, const char* fragmentPath);
+					// Shader(const char** pathArray, unsigned int bitMask);
 					Shader(const Shader &other);	//Copy constructor
 		virtual 	~Shader();						//Destructor
 		Shader		&operator=(const Shader &other); //Assignement operator
 };
-		
 # include <Shader.tpp>

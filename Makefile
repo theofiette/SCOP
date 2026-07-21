@@ -7,6 +7,7 @@ BUILD= .build/
 
 CPPSRC =	src/main.cpp \
 			src/Shader.cpp \
+			src/stb_image.cpp\
 			src/exit.cpp
 			
 CSRC   = src/glad.c
