@@ -14,28 +14,11 @@ void Shader::use() const
 unsigned int	Shader::_compilShaderFile(const char* path, GLenum type) const
 {
 	std::string			code_str;
-	std::ifstream		file;
-	std::stringstream	stream;
 	unsigned int		id;
 	const char*			code;
 
-	// Stream the file into a string
-	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-	try {
-
-		file.open(path);
-		stream << file.rdbuf();
-		file.close();
-		code_str = stream.str();
-		code = code_str.c_str();
-	}
-	catch (std::ifstream::failure &e) {
-
-		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-		clean_exit(true, 1);
-
-	}
+	code_str = FileLoader::toString(path);
+	code = code_str.c_str();
 
 	// Create the OpenGL shader object
 	id = glCreateShader(type);
@@ -57,7 +40,7 @@ void Shader::_checkShaderCompil(unsigned int shaderID) const
 	if (!success)
 	{
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::COMPILATION::FAILED\n" << infoLog << std::endl;
+		std::cerr << "ERROR::SHADER::COMPILATION::FAILED\n" << infoLog << std::endl;
 		
 		clean_exit(true, 1);
 	}
@@ -73,7 +56,7 @@ void Shader::_checkProgramLink(unsigned int programID) const
 	if (!success)
 	{
 		glGetProgramInfoLog(programID, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::LINKAGE::FAILED\n" << infoLog << std::endl;
+		std::cerr << "ERROR::SHADER::LINKAGE::FAILED\n" << infoLog << std::endl;
 		
 		clean_exit(true, 1);
 	}
@@ -101,25 +84,24 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 		<< "Default constructor called for class Shader" << std::endl;
 }
 
-Shader::Shader(const Shader &other) : _ID(other.getID())
-{
-	std::cout
-		<< "Copy constructor called for class Shader" << std::endl;
-};
+// Shader::Shader(const Shader &other) : _ID(other.getID())
+// {
+// 	std::cout
+// 		<< "Copy constructor called for class Shader" << std::endl;
+// };
 
-// ASSIGNEMENT OPERATOR
+// // ASSIGNEMENT OPERATOR
 
-Shader &Shader::operator=(const Shader &other)
-{
-
-	if (this != &other)
-	{
-		_ID = other.getID();
-	}
-	std::cout
-		<< "Copy assignment operator called for class Shader" << std::endl;
-	return (*this);
-}
+// Shader &Shader::operator=(const Shader &other)
+// {
+// 	if (this != &other)
+// 	{
+// 		_ID = other.getID();
+// 	}
+// 	std::cout
+// 		<< "Copy assignment operator called for class Shader" << std::endl;
+// 	return (*this);
+// }
 
 // DESTRUCTOR
 

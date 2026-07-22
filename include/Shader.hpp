@@ -3,9 +3,6 @@
 # include <scop.hpp>
 
 # include <string>
-# include <fstream>
-# include <sstream>
-# include <iostream>
 
 class Shader
 {
@@ -17,7 +14,9 @@ class Shader
 		void 			_checkShaderCompil(unsigned int shaderID) const;
 		void 			_checkProgramLink(unsigned int programID) const;
 
-		Shader(); 						//Default constructor is not allowed
+		Shader(); 										//Default constructor is not allowed
+		Shader(const Shader &other);					//Copy constructor is not allowed
+		Shader		&operator=(const Shader &other); 	//Assignement operator is not allowed
 
 	public:
 
@@ -31,8 +30,6 @@ class Shader
 		// Orthodox Canonical Form
 					Shader(const char* vertexPath, const char* fragmentPath);
 					// Shader(const char** pathArray, unsigned int bitMask);
-					Shader(const Shader &other);	//Copy constructor
 		virtual 	~Shader();						//Destructor
-		Shader		&operator=(const Shader &other); //Assignement operator
 };
 # include <Shader.tpp>

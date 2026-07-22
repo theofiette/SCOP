@@ -1,0 +1,8 @@
+Default constructor called for class Shader
+
+size : 0
+Size of unsigned char : 1
+Size of char : 1
+
+
+Destructor called for class Shader

@@ -6,7 +6,9 @@
 #include <GLFW/glfw3.h>
 
 // Classes
+#include "FileLoader.hpp"
 #include "Shader.hpp"
+#include "Texture.hpp"
 
 // Math
 #include <cmath>

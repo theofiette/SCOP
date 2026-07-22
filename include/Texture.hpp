@@ -4,25 +4,34 @@
 
 # include <iostream>
 
+// Could add inFormat and outFormat to deal with RGBA
+typedef struct textureData {
+
+	unsigned char	*data;
+	unsigned int	width;
+	unsigned int	height;
+	unsigned int	channelsNumber;
+
+} t_textureData;
+
 class Texture
 {
 	private:
 
 		unsigned int	_ID;
-		unsigned int	_unit;
 
-		static uint32_t	_bitUnit; //bit pattern to specify which unit are set
+		textureData			_loadTexture(const char* path) const;
 
-		void			_loadTexture(const char* path) const;
+		Texture(); 						//Default constructor is not allowed
 
 	public:
 
 		unsigned int	getID() const;
+		void			bind(unsigned int textureUnit) const;
 
 		// Orthodox Canonical Form
-					Texture(); 						//Default constructor
+					Texture(const char* path, bool flip = false);
 					Texture(const Texture &other);	//Copy constructor
 		virtual 	~Texture();						//Destructor
 		Texture	&operator=(const Texture &other); //Assignement operator
 };
-		

@@ -1,0 +1,53 @@
+
+#include "FileLoader.hpp"
+
+// CONSTRUCTORS
+
+std::string	FileLoader::toString(const char *path)
+{
+	std::string			str;
+	std::ifstream		file;
+	std::stringstream	stream;
+
+	// Stream the file into a string
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+	try {
+
+		file.open(path);
+		stream << file.rdbuf();
+		file.close();
+		str = stream.str();
+	}
+	catch (std::ifstream::failure &e) {
+
+		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		clean_exit(true, 1);
+
+	}
+
+	return (str);
+}
+
+std::string	FileLoader::getExtension(const char *path)
+{
+	std::string		path_str;
+	std::string		extension;
+	size_t			extensionMarker;
+	
+	try {
+
+		path_str = std::string(path);
+		extensionMarker = path_str.rfind(".");
+		extension = path_str.substr(extensionMarker);
+		
+	}
+	catch (std::exception &e) {
+
+		std::cerr << "ERROR::TEXTURE::LOADING::FAILED\n" << "Invalid file extension" << std::endl;
+		clean_exit(true, 1);
+
+	}
+
+	return (extension);
+}

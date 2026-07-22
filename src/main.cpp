@@ -1,5 +1,7 @@
 #include <scop.hpp>
 
+#include <unistd.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -224,8 +226,8 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 
 	// Generating the texture n1
 
@@ -236,6 +238,102 @@ int main() {
 	data = stbi_load("/home/tfiette/42/POST_COMMON_CORE/SCOP/personal_git/textures/mire.tga", &width, &height, &nrChannels, 0);
 	if (!data)
 		clean_exit(true, 2);
+
+	printf((const char*)data);
+	printf("%s\n", (const char*)data);
+
+
+	unsigned int size = strlen((const char *)data);
+	unsigned int sizeo = sizeof(data);
+	
+	printf("size : %u\n", size);
+
+
+	printf("Sizeo : %d\n", sizeo);
+	printf("WIDTH : %d\n", width);
+	printf("Size of unsigned char : %ld\n", sizeof(unsigned char));
+	printf("Size of char : %ld\n", sizeof(char));
+	printf("Number of channels : %d\n", nrChannels);
+
+
+	std::cout << std::endl;
+	for (unsigned int i = 0; i < (unsigned int)(nrChannels * width * height); i++)
+	{
+		
+		std::cout << (int)data[i];
+
+		if ((i + 1) % 4 == 0)
+		{
+			data[i] = 0;
+			std::cout << std::endl;
+		}
+		else
+			std::cout << " | ";
+
+	}
+
+	printf("----\n");
+
+	std::string content = FileLoader::toString("/home/tfiette/42/POST_COMMON_CORE/SCOP/personal_git/textures/mire.tga");
+
+	typedef struct {
+   		char  idlength;
+   		char  colourmaptype;
+   		char  datatypecode;
+   		short int colourmaporigin;
+   		short int colourmaplength;
+   		char  colourmapdepth;
+   		short int x_origin;
+   		short int y_origin;
+   		short width;
+   		short height;
+   		char  bitsperpixel;
+   		char  imagedescriptor;
+	} HEADER;
+
+	std::cout << "HEADER size is : " << sizeof(HEADER) << std::endl;
+
+	std::string	header[18] = {
+		"id length ", // char
+		"colour map type ",
+		"data type code ",
+		"colour map origin ", // short
+		"",
+		"colour map length ",
+		"",
+		"colour map depth ",
+		"x origin ",
+		"",
+		"y origin ",
+		"",
+		"width ",
+		"",
+		"height ",
+		"",
+		"bits per pixel ",
+		"image descriptor ",
+
+	};
+
+	std::cout << "\n\n TGA HEADER" << std::endl;
+	for (unsigned int i = 0; i < content.size(); i++)
+	{
+		if (i < 18 && header[i].size())
+		{
+			printf("\n");
+			std::cout << header[i];
+		}
+		std::cout << (int)content[i];
+
+		// if ((i + 1) % 4 == 0)
+		// 	std::cout << std::endl;
+		// else
+		// 	std::cout << " | ";
+
+	}
+	std::cout << std::endl;
+
+	// return (0);
 
 	unsigned int texture1;
 	glGenTextures(1, &texture1);
@@ -253,6 +351,7 @@ int main() {
 	if (!data)
 		clean_exit(true, 2);
 	
+	
 	unsigned int texture2;
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
@@ -262,6 +361,7 @@ int main() {
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(data);
 	
+	Texture texture("/home/tfiette/42/POST_COMMON_CORE/SCOP/personal_git/textures/test_picture.tga", false);
 
 	while (!glfwWindowShouldClose(window)) {
 		
