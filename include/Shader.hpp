@@ -14,9 +14,9 @@ class Shader
 		void 			_checkShaderCompil(unsigned int shaderID) const;
 		void 			_checkProgramLink(unsigned int programID) const;
 
-		Shader(); 										//Default constructor is not allowed
-		Shader(const Shader &other);					//Copy constructor is not allowed
-		Shader		&operator=(const Shader &other); 	//Assignement operator is not allowed
+		Shader() = delete; 										//Default constructor is not allowed
+		Shader(const Shader &other) = delete;					//Copy constructor is not allowed
+		Shader		&operator=(const Shader &other) = delete; 	//Assignement operator is not allowed
 
 	public:
 
