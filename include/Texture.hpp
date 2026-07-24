@@ -10,7 +10,8 @@ typedef struct textureData {
 	unsigned char	*data = NULL;
 	unsigned int	width;
 	unsigned int	height;
-	unsigned int	channelsNumber;
+	unsigned int	inFormat;
+	unsigned int	outFormat;
 
 } t_textureData;
 
@@ -37,8 +38,8 @@ class Texture
 
 		unsigned int	_ID;
 
-		textureData			_loadTexture(const char* path) const;
-		void				_parseTga(const char * content, textureData &texture) const;
+		textureData			_loadTexture(const char* path, bool flip) const;
+		void				_parseTga(const char * content, textureData &texture, bool flip) const;
 
 
 		Texture() = delete;		//Default constructor is not allowed

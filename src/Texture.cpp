@@ -18,9 +18,7 @@ Texture::Texture(const char* path, bool flip)
 {
 	t_textureData texture;
 	
-	texture = _loadTexture(path);
-
-	(void)flip;
+	texture = _loadTexture(path, flip);
 
 	glGenTextures(1, &_ID);
 	glBindTexture(GL_TEXTURE_2D, _ID);
@@ -64,73 +62,62 @@ void printTgaHeader(t_tgaHeader *header)
     printf("imageDescriptor: %d\n", (unsigned char)header->imageDescriptor);
 }
 
-void Texture::_parseTga(const char *content, textureData &texture) const
+void _parseTgaHeader(const char *content, textureData &texture)
 {
-
 	tgaHeader		header = *(reinterpret_cast<const tgaHeader *>(content));
-	unsigned int	textureSize;
-	unsigned int	incomingChannelsNumber;
 
-	// Checking that the texture file has 3 or 4 channels
-	incomingChannelsNumber = header.bitsPerPixel / 8;
-	if (incomingChannelsNumber != 3 && incomingChannelsNumber != 4)
+	// in and out channels
+	texture.outFormat = 4; // Out as RGBA
+	texture.inFormat = header.bitsPerPixel / 8;
+	if (texture.inFormat != 3 && texture.inFormat != 4) // If not RGB neither RGBA
 	{
 		std::cout << "ERROR::TEXTURE::INVALID_CHANNELS_NUMBER" << std::endl;
 		clean_exit(true, 1);
 	}
 
-	printTgaHeader(&header);
-
-	texture.height =			header.height;
-	texture.width =				header.width;
-	texture.channelsNumber =	4; // RGBA
-
-	textureSize = header.height * header.width * texture.channelsNumber;
-	texture.data = new unsigned char[textureSize]; // outFormat is RGBA
-
-	std::cout << "texture incomming channels is : " << incomingChannelsNumber << std::endl;
-
-	unsigned int j = 0; // Current channel pixel in the incomming file
-	unsigned int current_texture_channel;
-
-	(void)current_texture_channel;
-
-	// For each channel in the texture
-	for (unsigned int i = 0; i < textureSize; i ++)
-	{
-		switch (i % texture.channelsNumber) // RGBA
-		{
-			case 0 :
-				texture.data[i] = content[ sizeof(tgaHeader) + j + 2];
-				j ++;
-				break ;
-			
-			case 1 :
-				texture.data[i] = content[ sizeof(tgaHeader) + j];
-				j++;
-				break ;
-
-			case 2 :
-				texture.data[i] = content[ sizeof(tgaHeader) + j - 2];
-				j++;
-				break ;
-
-			case 3 :
-				if (incomingChannelsNumber == 4) // inFormat is RGBA
-				{
-					texture.data[i] = content[ sizeof(tgaHeader) + j];
-					j++;
-				}
-				else if (incomingChannelsNumber == 3) // inFormat is RGB
-					texture.data[i] = 255; // NO ALPHA
-				break ;
-
-		}
-	}
+	// dimensions
+	texture.height	= header.height;
+	texture.width	= header.width;
+	texture.data	= new unsigned char[texture.height * texture.width * texture.outFormat];
 
 }
 
-textureData		Texture::_loadTexture(const char* path) const
+
+# define CHANNELS_IN_RGB 	3
+# define CHANNELS_IN_RGBA	4
+
+/*
+*	TODO : while this class is functionnal for the project, the tga parsing is not fully implemented
+*/
+void Texture::_parseTga(const char *content, textureData &texture, bool flip) const
+{
+	unsigned int inOffset = sizeof(tgaHeader);	// Reading bit from file
+	unsigned int outOffset;						// Writing bit from texture
+	unsigned int currentRow;					// Since the picture can be vertically flipped, it's not as simple as row ++
+	int BGRtoRGB[3] = {2, 1, -0};				// To convert the byte order
+
+	_parseTgaHeader(content, texture);
+
+	for (unsigned int y = 0; y < texture.height; y ++)
+	{
+		currentRow = ( flip ? texture.height - y  - 1 : y);
+		for (unsigned int x = 0; x < texture.width; x ++)
+		{
+			outOffset = currentRow * texture.width * texture.outFormat + x * texture.outFormat;
+
+			for (unsigned int channel = 0; channel < CHANNELS_IN_RGB; channel ++)
+				texture.data[outOffset + channel] = content[inOffset + BGRtoRGB[channel]];
+
+			if (texture.inFormat == CHANNELS_IN_RGBA) // In is RGBA
+				texture.data[outOffset + CHANNELS_IN_RGBA - 1] = content[inOffset + CHANNELS_IN_RGBA - 1];
+			else if (texture.inFormat == CHANNELS_IN_RGB)
+				texture.data[outOffset + CHANNELS_IN_RGBA - 1] = content[255];
+			inOffset += texture.inFormat;
+		}	
+	}
+}
+
+textureData		Texture::_loadTexture(const char* path, bool flip) const
 {
 
 	textureData		texture;
@@ -142,7 +129,7 @@ textureData		Texture::_loadTexture(const char* path) const
 
 	if (extension == ".tga") {
 
-		_parseTga(textureContent.c_str(), texture);
+		_parseTga(textureContent.c_str(), texture, flip);
 
 	}
 

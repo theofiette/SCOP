@@ -365,8 +365,8 @@ int main() {
 	// glGenerateMipmap(GL_TEXTURE_2D);
 	// stbi_image_free(data);
 	
-	Texture mire("textures/mire.tga");
-	Texture friends("textures/test_picture.tga");
+	Texture mire("textures/mire.tga", true);
+	Texture friends("textures/test_picture.tga", true);
 
 	while (!glfwWindowShouldClose(window)) {
 		
@@ -395,7 +395,7 @@ int main() {
 
 		// To draw the rectangle
 		mire.bind(0);
-		shader.setUniform<int>("tex1", 0);
+		shader.setUniform<int>("tex2", 0);
 		friends.bind(1);
 		shader.setUniform<int>("tex2", 1);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

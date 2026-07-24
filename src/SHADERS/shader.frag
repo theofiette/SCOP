@@ -10,5 +10,5 @@ out vec4 FragColor;
 
 void main()
 {
-	FragColor = mix(texture(tex1, texCoord), texture(tex2, texCoord), 0.2);
+	FragColor = texture(tex2, texCoord);
 }
