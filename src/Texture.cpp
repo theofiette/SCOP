@@ -33,19 +33,6 @@ Texture::Texture(const char* path, bool flip)
 		<< "Default constructor called for class Texture" << std::endl;
 }
 
-   		// char  idLength;
-   		// char  colourMapType;
-   		// char  dataTypeCode;
-   		// u_int16_t colourMapOrigin;
-   		// u_int16_t colourMapLength;
-   		// char  colourMapDepth;
-   		// u_int16_t xOrigin;
-   		// u_int16_t yOrigin;
-   		// u_int16_t width;
-   		// u_int16_t height;
-   		// char  bitsPerPixel;
-   		// char  imageDescriptor;
-
 void printTgaHeader(t_tgaHeader *header)
 {
     printf("idLength: %d\n", (unsigned char)header->idLength);
@@ -111,7 +98,7 @@ void Texture::_parseTga(const char *content, textureData &texture, bool flip) co
 			if (texture.inFormat == CHANNELS_IN_RGBA) // In is RGBA
 				texture.data[outOffset + CHANNELS_IN_RGBA - 1] = content[inOffset + CHANNELS_IN_RGBA - 1];
 			else if (texture.inFormat == CHANNELS_IN_RGB)
-				texture.data[outOffset + CHANNELS_IN_RGBA - 1] = content[255];
+				texture.data[outOffset + CHANNELS_IN_RGBA - 1] = 255;
 			inOffset += texture.inFormat;
 		}	
 	}
@@ -160,7 +147,7 @@ textureData		Texture::_loadTexture(const char* path, bool flip) const
 
 Texture::~Texture()
 {
-	// TODO : glDeleteTextures ?
+	glDeleteTextures(1, &_ID);
 	std::cout
 		<< "Destructor called for class Texture" << std::endl;
 }
