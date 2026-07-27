@@ -33,8 +33,8 @@ std::vector<std::string> FileLoader::toStringVector(const char *path)
 	std::vector<std::string>	strVector;
 	std::ifstream				file;
 	std::stringstream			stream;
-	std::string					line = "";
-	std::string					word = "";
+	std::string					line;
+	std::string					word;
 
 	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 

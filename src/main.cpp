@@ -166,9 +166,13 @@ int main() {
 		// Global texture settings
 
 
-	// Mesh rectangle("mesh/rectangle.obj");
-	std::vector<std::string> vector = FileLoader::toStringVector("mesh/rectangle.obj");
+	Mesh rectangle("mesh/rectangle.obj");
+	// std::vector<std::string> vector = FileLoader::toStringVector("mesh/rectangle.obj");
 
+	// for (std::vector<std::string>::iterator i = vector.begin(); i < vector.end(); i++)
+	// {
+	// 	std::cout << *i << std::endl;
+	// }
 
 	
 	Texture mire("textures/mire.tga", true);
