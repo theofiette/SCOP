@@ -9,7 +9,6 @@ std::string	FileLoader::toString(const char *path)
 	std::ifstream		file;
 	std::stringstream	stream;
 
-	// Stream the file into a string
 	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
 	try {
@@ -21,12 +20,52 @@ std::string	FileLoader::toString(const char *path)
 	}
 	catch (std::ifstream::failure &e) {
 
-		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		std::cout << "ERROR::FILELOADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
 		clean_exit(true, 1);
 
 	}
 
 	return (str);
+}
+
+std::vector<std::string> FileLoader::toStringVector(const char *path)
+{
+	std::vector<std::string>	strVector;
+	std::ifstream				file;
+	std::stringstream			stream;
+	std::string					line = "";
+	std::string					word = "";
+
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+	try {
+
+		file.open(path);
+		stream << file.rdbuf();
+
+		while (!stream.eof())
+		{
+			line.clear();
+			word.clear();
+			while (stream >> word)
+			{
+				if (word.length())
+					line.append(word + " ");
+				if (stream.peek() == '\n')
+					break ;
+			}
+			if (line.length())
+				strVector.push_back(line);
+		}
+	}
+	catch (std::ifstream::failure &e) {
+
+		std::cout << "ERROR::FILELOADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		clean_exit(true, 1);
+
+	}
+
+	return (strVector);
 }
 
 std::string	FileLoader::getExtension(const char *path)

@@ -1,6 +1,7 @@
 # pragma once
 
 # include <scop.hpp>
+# include <vector>
 
 class Mesh
 {

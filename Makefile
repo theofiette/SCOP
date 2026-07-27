@@ -7,8 +7,9 @@ BUILD= .build/
 
 CPPSRC =	src/main.cpp \
 			src/FileLoader.cpp \
-			src/Shader.cpp \
+			src/Mesh.cpp \
 			src/Texture.cpp \
+			src/Shader.cpp \
 			src/stb_image.cpp\
 			src/exit.cpp
 			

@@ -5,8 +5,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+// Structs
+#include "structs.hpp"
+
 // Classes
 #include "FileLoader.hpp"
+#include "Mesh.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
 

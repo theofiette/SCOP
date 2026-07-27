@@ -8,29 +8,6 @@
 
 #include <string.h>
 
-#include "stb_image.h"
-
-
-// const char *vertexShaderSource = "#version 440 core\n"
-// "layout (location = 0) in vec3 aPos;\n"
-// "layout (location = 1) in vec3 aColor;\n"
-// "out vec3 vertexColor;\n"
-// "void main()\n"
-// "{\n"
-// "	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-// "	vertexColor = aColor;"
-// "}\n";
-
-
-// const char *fragmentShaderSource = "#version 440 core\n"
-// "in vec3 vertexColor;\n"
-// "out vec4 FragColor;\n"
-// "void main()\n"
-// "{\n"
-// "	FragColor = vec4(vertexColor, 1.0);\n"
-// "}\n";
-
-
 void _on_window_resize(GLFWwindow* window, int width, int height) {
 
 	(void)window;
@@ -103,17 +80,17 @@ int main() {
 	// 	0.0f,	0.5f,	0.0f,				0.0f,	0.0f,	1.0f
 	// };
 
-	float rect_vertices[] = {
-		0.5f,	0.5f,	0.0f,	/*color*/	1.0f,	0.0f,	0.0f,	/*textcoord*/	1.0f, 1.0f,
-		0.5f,	-0.5f,	0.0f,				0.0f,	1.0f,	0.0f,					1.0f, 0.0f, 
-		-0.5f,	-0.5f,	0.0f,				0.0f,	0.0f,	1.0f,					0.0f, 0.0f,
-		-0.5f,	0.5f,	0.0f,				1.0f,	1.0f,	0.0f,					0.0f, 1.0f
-	};
+	// float rect_vertices[] = {
+	// 	0.5f,	0.5f,	0.0f,	/*color*/	1.0f,	0.0f,	0.0f,	/*textcoord*/	1.0f, 1.0f,
+	// 	0.5f,	-0.5f,	0.0f,				0.0f,	1.0f,	0.0f,					1.0f, 0.0f, 
+	// 	-0.5f,	-0.5f,	0.0f,				0.0f,	0.0f,	1.0f,					0.0f, 0.0f,
+	// 	-0.5f,	0.5f,	0.0f,				1.0f,	1.0f,	0.0f,					0.0f, 1.0f
+	// };
 
-	unsigned int rect_indices[] = {
-		0, 1, 3,
-		1, 2, 3
-	};
+	// unsigned int rect_indices[] = {
+	// 	0, 1, 3,
+	// 	1, 2, 3
+	// };
 
 	// float text_coord[] = {
 	// 	0.0f,	0.0f,
@@ -152,39 +129,45 @@ int main() {
 	
 	// ---
 
+
+
 	// Creating another VAO for this mesh
 
-	unsigned int VAO_rectangle;
-	glGenVertexArrays(1, &VAO_rectangle);
+	// unsigned int VAO_rectangle;
+	// glGenVertexArrays(1, &VAO_rectangle);
 	
-	glBindVertexArray(VAO_rectangle);
+	// glBindVertexArray(VAO_rectangle);
 
-	// Creating another VBO to use with an EBO
-	unsigned int VBO_rectangle;
-	glGenBuffers(1, &VBO_rectangle);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_rectangle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(rect_vertices), rect_vertices, GL_STATIC_DRAW); // copy vertices data in the buffer
+	// // Creating another VBO to use with an EBO
+	// unsigned int VBO_rectangle;
+	// glGenBuffers(1, &VBO_rectangle);
+	// glBindBuffer(GL_ARRAY_BUFFER, VBO_rectangle);
+	// glBufferData(GL_ARRAY_BUFFER, sizeof(rect_vertices), rect_vertices, GL_STATIC_DRAW); // copy vertices data in the buffer
 
-	// Creating an Element Buffer Object to use indices
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rect_indices), rect_indices, GL_STATIC_DRAW);
+	// // Creating an Element Buffer Object to use indices
+	// unsigned int EBO;
+	// glGenBuffers(1, &EBO);
+	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	// glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rect_indices), rect_indices, GL_STATIC_DRAW);
 
-	// Tell OpenGL how to interpret the vertex data (for the vertex shader)
+	// // Tell OpenGL how to interpret the vertex data (for the vertex shader)
+	// // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
+	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	// glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	// glEnableVertexAttribArray(0);
+	// glEnableVertexAttribArray(1);
+	// glEnableVertexAttribArray(2);
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// --- Texturing the triangle
 
 		// Global texture settings
+
+
+	// Mesh rectangle("mesh/rectangle.obj");
+	std::vector<std::string> vector = FileLoader::toStringVector("mesh/rectangle.obj");
 
 
 	
@@ -218,11 +201,11 @@ int main() {
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// To draw the rectangle
-		mire.bind(0);
-		shader.setUniform<int>("tex2", 0);
-		friends.bind(1);
-		shader.setUniform<int>("tex2", 1);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		// mire.bind(0);
+		// shader.setUniform<int>("tex2", 0);
+		// friends.bind(1);
+		// shader.setUniform<int>("tex2", 1);
+		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

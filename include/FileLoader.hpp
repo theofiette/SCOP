@@ -4,7 +4,7 @@
 # include <string>
 # include <fstream>
 # include <sstream>
-# include <iostream>
+#include <vector>
 
 #include "scop.hpp"
 
@@ -16,8 +16,9 @@ class FileLoader
 
 public:
 
-	static std::string	toString(const char *path);
-	static std::string	getExtension(const char *path);
+	static std::string				toString(const char *path);
+	static std::vector<std::string>	toStringVector(const char *path);
+	static std::string				getExtension(const char *path);
 
 };
 		
