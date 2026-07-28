@@ -1,1 +1,2 @@
 https://learnopengl.com/book/book_pdf.pdf
+https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/

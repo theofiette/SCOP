@@ -7,13 +7,18 @@
 typedef struct meshData {
 
 	std::vector<vec3>	vertices;
-	std::vector<vec3>	indexes;
+	std::vector<vec2>	textureCoord;
+	std::vector<vec3i>	indexes;
 
 } t_meshData;
 
 class Mesh
 {
 	private:
+
+		unsigned int _vertexCount;
+		unsigned int _indexCount;
+		unsigned int _textureCoordCount;
 
 		unsigned int _VAO;
 		unsigned int _VBO;
@@ -22,6 +27,7 @@ class Mesh
 		// Parsing methods called at instanciation
 		void	_parseFile(const char* objFile, meshData &data) const;
 		void	_parseVertex(const std::string &line, meshData &data) const;
+		// void 	_parseVertexTexture(const std::string &line, meshData &data) const;
 		void	_parseIndex(const std::string &line, meshData &data) const;
 
 		Mesh() = delete;								//Default constructor
@@ -29,10 +35,6 @@ class Mesh
 		Mesh(const Mesh &other) = delete;				//Copy constructor
 
 	public:
-
-		unsigned int	get_VAO() const;
-		unsigned int	get_VBO() const;
-		unsigned int	get_EBO() const;
 
 		void			draw() const;
 

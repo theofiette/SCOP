@@ -3,16 +3,27 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+struct vec2 {
+	float	x;
+	float	y;
+};
+
 struct vec3 {
-    float   x;
-    float   y;
-    float   z;
+    float	x;
+    float	y;
+    float	z;
 };
 
 struct vec3i {
-    int   x;
-    int   y;
-    int   z;
+    int	x;
+    int	y;
+    int	z;
+};
+
+struct vec3ui {
+    unsigned int	x;
+    unsigned int	y;
+    unsigned int	z;
 };
 
 struct Vertex {

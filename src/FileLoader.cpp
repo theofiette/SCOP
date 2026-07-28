@@ -43,7 +43,7 @@ std::vector<std::string> FileLoader::toStringVector(const char *path)
 		file.open(path);
 		stream << file.rdbuf();
 
-		while (!stream.eof())
+		while (stream.good() && !stream.eof())
 		{
 			line.clear();
 			word.clear();

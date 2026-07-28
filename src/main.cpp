@@ -159,21 +159,20 @@ int main() {
 	// glEnableVertexAttribArray(1);
 	// glEnableVertexAttribArray(2);
 
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// --- Texturing the triangle
 
 		// Global texture settings
 
 
-	Mesh rectangle("mesh/rectangle.obj");
-	// std::vector<std::string> vector = FileLoader::toStringVector("mesh/rectangle.obj");
+	// Mesh rectangle("mesh/rectangle.obj");
+	// Mesh triangle("mesh/triangle.obj");
 
-	// for (std::vector<std::string>::iterator i = vector.begin(); i < vector.end(); i++)
-	// {
-	// 	std::cout << *i << std::endl;
-	// }
-
+	
+	// Mesh rect("mesh/1f_rectangle.obj");
+	Mesh textureRect("mesh/texture_rect.obj");
+	// Mesh logo("resources/42.obj");
+	// Mesh pyramid("mesh/pyramid.obj");
 	
 	Texture mire("textures/mire.tga", true);
 	Texture friends("textures/test_picture.tga", true);
@@ -190,15 +189,18 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+
 	while (!glfwWindowShouldClose(window)) {
 		
 		_process_inputs(window);
 		_process_render(window);
 
 		// test
-		float timeValue = glfwGetTime();
-		float turnValue = (sin(timeValue) / 2.0f);
-		shader.setUniform<float>("turnValue", turnValue);
+		// float timeValue = glfwGetTime();
+		// float turnValue = (sin(timeValue) / 2.0f);
+		// shader.setUniform<float>("turnValue", turnValue);
 
 		// // To draw the triangle
 		// glBindVertexArray(VAO_triangle);
@@ -207,9 +209,11 @@ int main() {
 		// To draw the rectangle
 		// mire.bind(0);
 		// shader.setUniform<int>("tex2", 0);
-		// friends.bind(1);
-		// shader.setUniform<int>("tex2", 1);
+		friends.bind(1);
+		shader.setUniform<int>("tex", 1);
 		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		textureRect.draw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
