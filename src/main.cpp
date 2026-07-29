@@ -168,10 +168,12 @@ int main() {
 	// Mesh rectangle("mesh/rectangle.obj");
 	// Mesh triangle("mesh/triangle.obj");
 
+	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
 	
 	// Mesh rect("mesh/1f_rectangle.obj");
-	Mesh textureRect("mesh/texture_rect.obj");
-	// Mesh logo("resources/42.obj");
+	// Mesh rect("mesh/rectangle.obj");
+	// Mesh textureRect("mesh/texture_rect.obj");
+	Mesh logo("resources/42.obj");
 	// Mesh pyramid("mesh/pyramid.obj");
 	
 	Texture mire("textures/mire.tga", true);
@@ -189,7 +191,7 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
 	while (!glfwWindowShouldClose(window)) {
@@ -213,7 +215,7 @@ int main() {
 		shader.setUniform<int>("tex", 1);
 		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		textureRect.draw();
+		logo.draw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
