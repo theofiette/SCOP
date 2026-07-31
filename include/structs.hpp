@@ -36,9 +36,9 @@ struct vec4ui {
 
 struct Vertex {
     vec3	position;
+    vec2 	normal;
+    vec2 	texCoord;
 	vec3	color;
-    // vec3 normal;
-    // vec3 texCoord;
 };
 
 struct FaceIndexes {

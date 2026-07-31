@@ -47,7 +47,7 @@ GLFWwindow* instanciate_window()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(800, 600, "./SCOP", NULL, NULL);
+	window = glfwCreateWindow(800, 800, "./SCOP", NULL, NULL);
 	if (window == NULL)
 		clean_exit(true, 1);
 
@@ -173,8 +173,9 @@ int main() {
 	// Mesh rect("mesh/1f_rectangle.obj");
 	// Mesh rect("mesh/rectangle.obj");
 	// Mesh textureRect("mesh/texture_rect.obj");
-	Mesh logo("resources/42.obj");
+	// Mesh logo("resources/42.obj");
 	// Mesh pyramid("mesh/pyramid.obj");
+	Mesh teapot("resources/teapot.obj");
 	
 	Texture mire("textures/mire.tga", true);
 	Texture friends("textures/test_picture.tga", true);
@@ -193,6 +194,9 @@ int main() {
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	glEnable(GL_CULL_FACE);
+
+	float z_offset = 0;
 
 	while (!glfwWindowShouldClose(window)) {
 		
@@ -210,12 +214,16 @@ int main() {
 
 		// To draw the rectangle
 		// mire.bind(0);
-		// shader.setUniform<int>("tex2", 0);
+
+		shader.setUniform<float>("offset", /*0 * sinf(z_offset)*/1);
+		shader.setUniform<float>("tanhalffov", tan(45 * 360 / (M_PI * 2)));
+		z_offset += 0.02;
+
 		friends.bind(1);
-		shader.setUniform<int>("tex", 1);
+		// shader.setUniform<int>("tex", 1);
 		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		logo.draw();
+		teapot.draw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

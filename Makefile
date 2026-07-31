@@ -1,6 +1,6 @@
 NAME= SCOP
 COMP= c++
-CFLAGS= -Wall -Wextra -Werror
+CFLAGS= -Wall -Wextra -Werror -g
 LDFLAGS= -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 INCLUDES= -Iinclude
 BUILD= .build/

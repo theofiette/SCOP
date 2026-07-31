@@ -29,7 +29,7 @@ class Mesh
 
 		// Parsing methods called at instanciation
 		void	_parseFile(const char* objFile, objFileData &data) const;
-		void	_parseVertex(const std::string &line, objFileData &data) const;
+		void	_parseVertexCoordinate(const std::string &line, objFileData &data) const;
 		// void 	_parseVertexTexture(const std::string &line, objFileData &data) const;
 		void	_parseIndex(const std::string &line, objFileData &data) const;
 
