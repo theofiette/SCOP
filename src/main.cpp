@@ -72,101 +72,11 @@ int main() {
 	GLFWwindow* window = NULL;
 
 	init(&window);
-
-
-	// float vertices[] = {
-	// 	-0.5f,	-0.5f,	0.0f,	/*color*/	1.0f,	0.0f,	0.0f,
-	// 	0.5f,	-0.5f,	0.0f,				0.0f,	1.0f,	0.0f,
-	// 	0.0f,	0.5f,	0.0f,				0.0f,	0.0f,	1.0f
-	// };
-
-	// float rect_vertices[] = {
-	// 	0.5f,	0.5f,	0.0f,	/*color*/	1.0f,	0.0f,	0.0f,	/*textcoord*/	1.0f, 1.0f,
-	// 	0.5f,	-0.5f,	0.0f,				0.0f,	1.0f,	0.0f,					1.0f, 0.0f, 
-	// 	-0.5f,	-0.5f,	0.0f,				0.0f,	0.0f,	1.0f,					0.0f, 0.0f,
-	// 	-0.5f,	0.5f,	0.0f,				1.0f,	1.0f,	0.0f,					0.0f, 1.0f
-	// };
-
-	// unsigned int rect_indices[] = {
-	// 	0, 1, 3,
-	// 	1, 2, 3
-	// };
-
-	// float text_coord[] = {
-	// 	0.0f,	0.0f,
-	// 	1.0f,	0.0f,
-	// 	0.5f,	1.0f
-	// };
 	
 	// Creating the vertex shader
-
 	Shader	shader("src/SHADERS/shader.vert",
 					 "src/SHADERS/shader.frag");
-	
-	// shader.setUniform<float>("vertexColor", 0.5f);
 	shader.use();
-
-	///////
-
-	// // Creating a VAO (Vertex Array Object) to create a rendering profile
-	// unsigned int VAO_triangle;
-	// glGenVertexArrays(1, &VAO_triangle);
-
-	// // Bind Vertex Array Object
-	// glBindVertexArray(VAO_triangle);
-
-	// // Creating a vertex buffer object to store the vertices in the GPU memory
-	// unsigned int VBO_triangle;
-	// glGenBuffers(1, &VBO_triangle); // creating buffer ID
-	// glBindBuffer(GL_ARRAY_BUFFER, VBO_triangle);
-	// glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // copy vertices data in the buffer
-
-	// // Tell OpenGL how to interpret the vertex data (for the vertex shader)
-	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	// glEnableVertexAttribArray(0);
-	// glEnableVertexAttribArray(1);
-	
-	// ---
-
-
-
-	// Creating another VAO for this mesh
-
-	// unsigned int VAO_rectangle;
-	// glGenVertexArrays(1, &VAO_rectangle);
-	
-	// glBindVertexArray(VAO_rectangle);
-
-	// // Creating another VBO to use with an EBO
-	// unsigned int VBO_rectangle;
-	// glGenBuffers(1, &VBO_rectangle);
-	// glBindBuffer(GL_ARRAY_BUFFER, VBO_rectangle);
-	// glBufferData(GL_ARRAY_BUFFER, sizeof(rect_vertices), rect_vertices, GL_STATIC_DRAW); // copy vertices data in the buffer
-
-	// // Creating an Element Buffer Object to use indices
-	// unsigned int EBO;
-	// glGenBuffers(1, &EBO);
-	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	// glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rect_indices), rect_indices, GL_STATIC_DRAW);
-
-	// // Tell OpenGL how to interpret the vertex data (for the vertex shader)
-	// // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	// glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	// glEnableVertexAttribArray(0);
-	// glEnableVertexAttribArray(1);
-	// glEnableVertexAttribArray(2);
-
-
-	// --- Texturing the triangle
-
-		// Global texture settings
-
-
-	// Mesh rectangle("mesh/rectangle.obj");
-	// Mesh triangle("mesh/triangle.obj");
 
 	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
 	
@@ -175,6 +85,7 @@ int main() {
 	// Mesh textureRect("mesh/texture_rect.obj");
 	// Mesh logo("resources/42.obj");
 	// Mesh pyramid("mesh/pyramid.obj");
+	// Mesh cube("mesh/cube.obj");
 	Mesh teapot("resources/teapot.obj");
 	
 	Texture mire("textures/mire.tga", true);
@@ -192,7 +103,7 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glEnable(GL_CULL_FACE);
 

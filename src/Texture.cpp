@@ -111,8 +111,8 @@ textureData		Texture::_loadTexture(const char* path, bool flip) const
 	std::string		extension;
 	std::string		textureContent;
 
-	extension = FileLoader::getExtension(path);
-	textureContent = FileLoader::toString(path);
+	extension = fileLoader::getExtension(path);
+	textureContent = fileLoader::toString(path);
 
 	if (extension == ".tga") {
 

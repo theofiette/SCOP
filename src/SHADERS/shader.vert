@@ -8,7 +8,7 @@ layout (location = 3) in vec3 aColor;
 uniform float offset;
 uniform float tanhalffov;
 
-flat out vec3 fragColor;
+out vec3 fragColor;
 
 void main()
 {

@@ -11,9 +11,9 @@ void Mesh::_parseVertexCoordinate(const std::string &line, objFileData &data) co
 
 	vec3				position;
 	std::stringstream	stream(line);
-	std::string			token;
+	std::string			prefixe;
 
-	stream >> token;
+	stream >> prefixe;
 
 	for (unsigned int i = 0; i < 3; i++)
 	{
@@ -22,50 +22,61 @@ void Mesh::_parseVertexCoordinate(const std::string &line, objFileData &data) co
 		stream >> f;
 		(reinterpret_cast<float *>(&position))[i] = f;
 	}
-
-	position.y -= 3.0;
-	position.z -= 4;
-
 	data.positions.push_back(position);
-
-	// std::cout << "REGISTERED A VERTEX " << 
-	// 				" X : " << vertex.x <<
-	// 				" Y : " << vertex.y <<
-	// 				" Z : " << vertex.z << std::endl;
 }
 
 /*
 *	This function parse a vertice texture line in a .obj file and fill a vec2 in the mesh data
 *	This function doesn't check that the coordinates are complete
 */
-// void Mesh::_parseVertexTexture(const std::string &line, objFileData &data) const {
+void Mesh::_parseVertexTexture(const std::string &line, objFileData &data) const {
 
-// 	vec2				textureCoord;
-// 	std::stringstream	stream(line);
-// 	std::string			token;
+	vec2				textureCoord;
+	std::stringstream	stream(line);
+	std::string			prefixe;
 
-// 	stream >> token;
+	stream >> prefixe;
 
-// 	for (unsigned int i = 0; i < 2; i++)
-// 	{
-// 		stream >> token;
-// 		(reinterpret_cast<float *>(&textureCoord))[i] = std::atof(token.c_str());
-// 	}
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		float f;
 
-// 	data.textureCoord.push_back(textureCoord);
+		stream >> f;
+		(reinterpret_cast<float *>(&textureCoord))[i] = f;
+	}
+	data.multiIndex = true;
+	data.textures.push_back(textureCoord);
+}
 
-// 	std::cout << "REGISTERED A TEXTURE COORD " << 
-// 					" X : " << textureCoord.x <<
-// 					" Y : " << textureCoord.y << std::endl;
+/*
+*	This function parse a vertice normal line in a .obj file and fill a vec2 in the mesh data
+*	This function doesn't check that the coordinates are complete
+*/
+void Mesh::_parseVertexNormal(const std::string &line, objFileData &data) const {
 
-// }
+	vec3				normalCoord;
+	std::stringstream	stream(line);
+	std::string			prefixe;
+
+	stream >> prefixe;
+
+	for (unsigned int i = 0; i < 3; i++)
+	{
+		float f;
+
+		stream >> f;
+		(reinterpret_cast<float *>(&normalCoord))[i] = f;
+	}
+	data.multiIndex = true;
+	data.normals.push_back(normalCoord);
+}
+
 
 /*
 *	This function parse an index line in a .obj file and fill a FaceIndex struct in the mesh data
 *	It splits 1 quad into 2 triangles, BUT it doesn't check that the resulting quad makes sense
 *	If the face indexes are not set in a logical order, the resulting triangles will overlap.
 *
-*	FOR NOW, this doesn't register vn or vt indexes
 */
 void Mesh::_parseIndex(const std::string &line, objFileData &data) const {
 
@@ -79,6 +90,16 @@ void Mesh::_parseIndex(const std::string &line, objFileData &data) const {
 	{
 		stream >> token;
 		(reinterpret_cast<int *>(&index.positionIndex))[i] = std::atoi(token.c_str()) - 1;
+		if (token.find('/') != std::string::npos)
+		{
+			token = token.substr(token.find('/') + 1);
+			(reinterpret_cast<int *>(&index.textureIndex))[i] = std::atoi(token.c_str()) - 1;
+		}
+		if (token.find('/') != std::string::npos)
+		{
+			token = token.substr(token.find('/') + 1);\
+			(reinterpret_cast<int *>(&index.normalIndex))[i] = std::atoi(token.c_str()) - 1;
+		}
 	}
 
 	data.indexes.push_back(index);
@@ -89,9 +110,13 @@ void Mesh::_parseIndex(const std::string &line, objFileData &data) const {
 		std::cout << "Splitting the quad : " << line << std::endl;
 
 		index.positionIndex.y = index.positionIndex.x;
-		(reinterpret_cast<int *>(&index))[0] = std::atoi(token.c_str()) - 1;
-		data.indexes.push_back(index);
+		index.normalIndex.y = index.normalIndex.x;
+		index.textureIndex.y = index.textureIndex.x;
 
+		(reinterpret_cast<int *>(&index))[0] = std::atoi(token.c_str()) - 1;
+		(reinterpret_cast<int *>(&index))[1] = std::atoi(token.c_str()) - 1;
+		(reinterpret_cast<int *>(&index))[2] = std::atoi(token.c_str()) - 1;
+		data.indexes.push_back(index);
 	}
 }
 
@@ -102,12 +127,12 @@ void Mesh::_parseFile(const char* objFile, objFileData &data) const
 
 	static const std::map<std::string, ParseFunc>	parseMap = {
 		{"v",	&Mesh::_parseVertexCoordinate},
-		// {"vn",	Mesh::_parseVertexNormale},
-		// {"vt",	&Mesh::_parseVertexTexture},
+		{"vn",	&Mesh::_parseVertexNormal},
+		{"vt",	&Mesh::_parseVertexTexture},
 		{"f",	&Mesh::_parseIndex}
 	};
 
-	std::vector<std::string>	fileContent = FileLoader::toStringVector(objFile);
+	std::vector<std::string>	fileContent = fileLoader::toStringVector(objFile);
 
 
 	for (const std::string &line : fileContent)
@@ -125,13 +150,28 @@ void Mesh::_parseFile(const char* objFile, objFileData &data) const
 	}
 }
 
-// TODO : check out of bound for vector
-// TODO : check if repeat
+void	Mesh::_colorFaces(std::vector<Vertex> &vertices) const
+{
+	for (Vertex &vert : vertices)
+	{
+		vec3	color;
+		// float	offset = static_cast<float>(std::experimental::randint(-10, 10)) / static_cast<float>(std::experimental::randint(100, 200));
+
+		// color.x = 0.5 + offset;
+		// color.y = 0.5 + offset;
+		// color.z = 0.5 + offset;
+
+		color.x = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
+		color.y = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
+		color.z = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
+
+		vert.color = color;
+	}
+}
+
 void	Mesh::_generateVerticesBuffer(
 	const objFileData &data, std::vector<Vertex> &vertices, std::vector<vec3ui> &indexes) const
 {
-	// Map de vertices crees ??
-	// Vertex 			vertex;
 	vec3ui			index;
 	unsigned int	currIndex = 0;
 
@@ -144,23 +184,46 @@ void	Mesh::_generateVerticesBuffer(
 		for (unsigned int i = 0; i < 3; i++)
 		{
 			Vertex vertex = {};
-			// check if there is already an existing vertex with the same attributes
-			// if yes : simply add its index to the indexes (index[i])
-			// else :
 			unsigned int coordIndex = reinterpret_cast<const unsigned int *>(&(face.positionIndex))[i];
-			// std::cout << "Needing vertex coord " << coordIndex << std::endl;
+			std::cout << "Needing vertex coord " << coordIndex << " / " << data.positions.size() << std::endl;
+			
 			vertex.position = data.positions[coordIndex];
+			if (data.multiIndex)
+			{
+				unsigned int normalIndex = reinterpret_cast<const unsigned int *>(&(face.normalIndex))[i];
+				unsigned int textureIndex = reinterpret_cast<const unsigned int *>(&(face.textureIndex))[i];
+
+				std::cout << "Needing vertex texture " << textureIndex << " / " << data.textures.size() << std::endl;
+				std::cout << "Needing vertex normal " << normalIndex << " / " << data.normals.size() << std::endl;
+				vertex.texture = data.textures[textureIndex];
+				vertex.normal = data.normals[normalIndex];
+			}
+
+			unsigned int vertexIndex = 0;
+			for (const Vertex &vert : vertices)
+			{
+				if (vert == vertex)
+					break ;
+				vertexIndex ++;
+			};
+			if (vertexIndex < vertices.size())
+			{
+				(reinterpret_cast<unsigned int *>(&index))[i] = vertexIndex;
+			}
+			else 
+			{
+				vertices.push_back(vertex);
+				(reinterpret_cast<unsigned int *>(&index))[i] = currIndex ++;
+			}
 			// std::cout << "Value registered is " << vertex.position.x << " | " <<
 			// 										vertex.position.y << " | " <<
 			// 										vertex.position.z << std::endl;
-			vertex.color = _getRandomGrey();
-			vertices.push_back(vertex);
 			
-			(reinterpret_cast<unsigned int *>(&index))[i] = currIndex ++;
 		}
 		// std::cout << "Pushing a face with indexes : " << index.x << " | " << index.y << " | " << index.z << std::endl;
 		indexes.push_back(index);
 	}
+	_colorFaces(vertices);
 }
 
 /*
@@ -178,6 +241,7 @@ Mesh::Mesh(const char* objFile)
 	std::vector<Vertex>			vertices;
 	std::vector<vec3ui>			indexes; // 3 index de vertex par face 
 
+	data.multiIndex = false;
 	_parseFile(objFile, data); 							// Remplir la struct objFileData
 	_generateVerticesBuffer(data, vertices, indexes);	// Creer un vecteur de vertices + un vecteur de 3 indice de vertice par face
 
@@ -226,12 +290,14 @@ Mesh::Mesh(const char* objFile)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indexCount * sizeof(vec3i), indexes.data(), GL_STATIC_DRAW);
 
 	// layout 0 -> position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
 	glEnableVertexAttribArray(0);
-	// layout 1 -> normal
-	// ....
-	// layout 2 -> texture
-	// ....
+	// layout 1 -> texture
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, texture));
+	glEnableVertexAttribArray(1);
+	// layout 2 -> normal
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
+	glEnableVertexAttribArray(2);
 	// layout 3 -> color
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, color));
 	glEnableVertexAttribArray(3);
@@ -249,24 +315,6 @@ void	Mesh::draw() const
 	else
 		glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
 	glBindVertexArray(0);
-}
-
-//TODO : out of class
-# include <experimental/random>
-vec3	Mesh::_getRandomGrey() const
-{
-	vec3	color;
-	// float	offset = static_cast<float>(std::experimental::randint(-1, 1)) / static_cast<float>(std::experimental::randint(10, 20));
-
-	// color.x = 0.5 + offset;
-	// color.y = 0.5 + offset;
-	// color.z = 0.5 + offset;
-
-	color.x = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
-	color.y = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
-	color.z = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
-
-	return (color);
 }
 
 // DESTRUCTOR

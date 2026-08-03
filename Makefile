@@ -6,7 +6,7 @@ INCLUDES= -Iinclude
 BUILD= .build/
 
 CPPSRC =	src/main.cpp \
-			src/FileLoader.cpp \
+			src/fileLoader.cpp \
 			src/Mesh.cpp \
 			src/Texture.cpp \
 			src/Shader.cpp \

@@ -17,7 +17,7 @@ unsigned int	Shader::_compilShaderFile(const char* path, GLenum type) const
 	unsigned int		id;
 	const char*			code;
 
-	code_str = FileLoader::toString(path);
+	code_str = fileLoader::toString(path);
 	code = code_str.c_str();
 
 	// Create the OpenGL shader object

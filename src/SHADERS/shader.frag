@@ -1,6 +1,6 @@
 #version 440 core
 
-flat in vec3 fragColor;
+in vec3 fragColor;
 
 out vec4 FragColor;
 
