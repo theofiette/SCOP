@@ -5,7 +5,7 @@
 # include <map>
 # include <experimental/random>
 
-typedef struct objFileData {
+struct objFileData {
 
 	//Vertex attributes
 	std::vector<vec3>			positions;
@@ -16,7 +16,7 @@ typedef struct objFileData {
 	//Are there texture and normal coordinates ?
 	bool						multiIndex;
 
-} t_objFileData;
+};
 
 class Mesh
 {
@@ -43,7 +43,7 @@ class Mesh
 			const objFileData &data, std::vector<Vertex> &vertices, std::vector<vec3ui> &indexes) const;
 
 		Mesh() = delete;								//Default constructor
-		Mesh	&operator=(const Mesh &other) = delete;	//Assignement operator
+		Mesh	&operator=(const Mesh &other) = delete;	//Assignment operator
 		Mesh(const Mesh &other) = delete;				//Copy constructor
 
 	public:

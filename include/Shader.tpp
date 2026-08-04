@@ -11,6 +11,8 @@ void Shader::setUniform(const std::string &name, T value) const
 		glUniform1i(loc, value);
 	else if constexpr (std::is_same_v<T, float>)
 		glUniform1f(loc, value);
+	else if constexpr (std::is_same_v<T, float[16]>)
+		glUniformMatrix4fv(loc, 1, GL_TRUE, value);
 	else
 		std::cerr << "Shader::setUniform: unsupported type" << std::endl;
 }

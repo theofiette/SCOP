@@ -9,7 +9,7 @@
 */
 void Mesh::_parseVertexCoordinate(const std::string &line, objFileData &data) const {
 
-	vec3				position;
+	vec3				position = {};
 	std::stringstream	stream(line);
 	std::string			prefixe;
 
@@ -20,7 +20,7 @@ void Mesh::_parseVertexCoordinate(const std::string &line, objFileData &data) co
 		float	f;
 
 		stream >> f;
-		(reinterpret_cast<float *>(&position))[i] = f;
+		position[i] = f;
 	}
 	data.positions.push_back(position);
 }
@@ -31,7 +31,7 @@ void Mesh::_parseVertexCoordinate(const std::string &line, objFileData &data) co
 */
 void Mesh::_parseVertexTexture(const std::string &line, objFileData &data) const {
 
-	vec2				textureCoord;
+	vec2				textureCoord = {};
 	std::stringstream	stream(line);
 	std::string			prefixe;
 
@@ -42,7 +42,7 @@ void Mesh::_parseVertexTexture(const std::string &line, objFileData &data) const
 		float f;
 
 		stream >> f;
-		(reinterpret_cast<float *>(&textureCoord))[i] = f;
+		textureCoord[i] = f;
 	}
 	data.multiIndex = true;
 	data.textures.push_back(textureCoord);
@@ -54,7 +54,7 @@ void Mesh::_parseVertexTexture(const std::string &line, objFileData &data) const
 */
 void Mesh::_parseVertexNormal(const std::string &line, objFileData &data) const {
 
-	vec3				normalCoord;
+	vec3				normalCoord = {};
 	std::stringstream	stream(line);
 	std::string			prefixe;
 
@@ -65,12 +65,11 @@ void Mesh::_parseVertexNormal(const std::string &line, objFileData &data) const 
 		float f;
 
 		stream >> f;
-		(reinterpret_cast<float *>(&normalCoord))[i] = f;
+		normalCoord[i] = f;
 	}
 	data.multiIndex = true;
 	data.normals.push_back(normalCoord);
 }
-
 
 /*
 *	This function parse an index line in a .obj file and fill a FaceIndex struct in the mesh data
@@ -80,7 +79,7 @@ void Mesh::_parseVertexNormal(const std::string &line, objFileData &data) const 
 */
 void Mesh::_parseIndex(const std::string &line, objFileData &data) const {
 
-	FaceIndexes 		index;
+	FaceIndexes 		index = {};
 	std::stringstream	stream(line);
 	std::string			token;
 	
@@ -89,33 +88,42 @@ void Mesh::_parseIndex(const std::string &line, objFileData &data) const {
 	for (unsigned int i = 0; i < 3; i++)
 	{
 		stream >> token;
-		(reinterpret_cast<int *>(&index.positionIndex))[i] = std::atoi(token.c_str()) - 1;
+		index.positionIndex[i] = std::atoi(token.c_str()) - 1;
 		if (token.find('/') != std::string::npos)
 		{
 			token = token.substr(token.find('/') + 1);
-			(reinterpret_cast<int *>(&index.textureIndex))[i] = std::atoi(token.c_str()) - 1;
+			if (token[0] != '/')
+				index.textureIndex[i] = std::atoi(token.c_str()) - 1;
 		}
 		if (token.find('/') != std::string::npos)
 		{
-			token = token.substr(token.find('/') + 1);\
-			(reinterpret_cast<int *>(&index.normalIndex))[i] = std::atoi(token.c_str()) - 1;
+			token = token.substr(token.find('/') + 1);
+			index.normalIndex[i] = std::atoi(token.c_str()) - 1;
 		}
 	}
 
 	data.indexes.push_back(index);
 
+	// 4th position -> splitting the quad
 	stream >> token;
 	if (stream.peek() != -1)
 	{
-		std::cout << "Splitting the quad : " << line << std::endl;
-
 		index.positionIndex.y = index.positionIndex.x;
 		index.normalIndex.y = index.normalIndex.x;
 		index.textureIndex.y = index.textureIndex.x;
 
-		(reinterpret_cast<int *>(&index))[0] = std::atoi(token.c_str()) - 1;
-		(reinterpret_cast<int *>(&index))[1] = std::atoi(token.c_str()) - 1;
-		(reinterpret_cast<int *>(&index))[2] = std::atoi(token.c_str()) - 1;
+		index.positionIndex.x = std::atoi(token.c_str()) - 1;
+		if (token.find('/') != std::string::npos)
+		{
+			token = token.substr(token.find('/') + 1);
+			if (token[0] != '/')
+				index.textureIndex.x = std::atoi(token.c_str()) - 1;
+		}
+		if (token.find('/') != std::string::npos)
+		{
+			token = token.substr(token.find('/') + 1);
+			index.normalIndex.x = std::atoi(token.c_str()) - 1;
+		}
 		data.indexes.push_back(index);
 	}
 }
@@ -175,26 +183,20 @@ void	Mesh::_generateVerticesBuffer(
 	vec3ui			index;
 	unsigned int	currIndex = 0;
 
-
-	// std::cout << "There are " << data.indexes.size() << " faces to operate on." << std::endl;
-
 	for (const FaceIndexes &face : data.indexes)
 	{
 		index = {};
 		for (unsigned int i = 0; i < 3; i++)
 		{
 			Vertex vertex = {};
-			unsigned int coordIndex = reinterpret_cast<const unsigned int *>(&(face.positionIndex))[i];
-			std::cout << "Needing vertex coord " << coordIndex << " / " << data.positions.size() << std::endl;
+			unsigned int coordIndex = face.positionIndex[i];
 			
 			vertex.position = data.positions[coordIndex];
 			if (data.multiIndex)
 			{
-				unsigned int normalIndex = reinterpret_cast<const unsigned int *>(&(face.normalIndex))[i];
-				unsigned int textureIndex = reinterpret_cast<const unsigned int *>(&(face.textureIndex))[i];
+				unsigned int textureIndex = face.textureIndex[i];
+				unsigned int normalIndex = face.normalIndex[i];
 
-				std::cout << "Needing vertex texture " << textureIndex << " / " << data.textures.size() << std::endl;
-				std::cout << "Needing vertex normal " << normalIndex << " / " << data.normals.size() << std::endl;
 				vertex.texture = data.textures[textureIndex];
 				vertex.normal = data.normals[normalIndex];
 			}
@@ -208,19 +210,14 @@ void	Mesh::_generateVerticesBuffer(
 			};
 			if (vertexIndex < vertices.size())
 			{
-				(reinterpret_cast<unsigned int *>(&index))[i] = vertexIndex;
+				index[i] = vertexIndex;
 			}
 			else 
 			{
 				vertices.push_back(vertex);
-				(reinterpret_cast<unsigned int *>(&index))[i] = currIndex ++;
+				index[i] = currIndex ++;
 			}
-			// std::cout << "Value registered is " << vertex.position.x << " | " <<
-			// 										vertex.position.y << " | " <<
-			// 										vertex.position.z << std::endl;
-			
 		}
-		// std::cout << "Pushing a face with indexes : " << index.x << " | " << index.y << " | " << index.z << std::endl;
 		indexes.push_back(index);
 	}
 	_colorFaces(vertices);
@@ -245,38 +242,8 @@ Mesh::Mesh(const char* objFile)
 	_parseFile(objFile, data); 							// Remplir la struct objFileData
 	_generateVerticesBuffer(data, vertices, indexes);	// Creer un vecteur de vertices + un vecteur de 3 indice de vertice par face
 
-
-	// std::cout << "\n\nAFTER REMAPPING :" << std::endl;
-
-	// for (unsigned int i = 0; i < indexes.size(); i++)
-	// {
-	// 	std::cout << "\nFace info : " << std::endl;
-
-	// 	Vertex vert;
-
-		// vert = vertices[indexes[i].x];
-		// std::cout << "Vertex at index " << indexes[i].x << "is : " << std::endl;
-		// std::cout << "x : " << vert.position.x << "\n" <<
-		// 			 "y : " << vert.position.y << "\n" <<
-		// 			 "z : " << vert.position.z << std::endl;
-		
-		// vert = vertices[indexes[i].y];
-		// std::cout << "Vertex at index " << indexes[i].y << "is : " << std::endl;
-		// std::cout << "x : " << vert.position.x << "\n" <<
-		// 			 "y : " << vert.position.y << "\n" <<
-		// 			 "z : " << vert.position.z << std::endl;
-
-	// 	vert = vertices[indexes[i].z];
-	// 	std::cout << "Vertex at index " << indexes[i].z << "is : " << std::endl;
-	// 	std::cout << "x : " << vert.position.x << "\n" <<
-	// 				 "y : " << vert.position.y << "\n" <<
-	// 				 "z : " << vert.position.z << std::endl;
-	// }
 	_vertexCount = vertices.size();
 	_indexCount = indexes.size();
-
-	std::cout << "\nVertex count is " << _vertexCount << std::endl;
-	std::cout << "Index count is " << _indexCount << std::endl;
 
 	glGenVertexArrays(1, &_VAO);
 	glBindVertexArray(_VAO);
@@ -293,10 +260,10 @@ Mesh::Mesh(const char* objFile)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
 	glEnableVertexAttribArray(0);
 	// layout 1 -> texture
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, texture));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, texture));
 	glEnableVertexAttribArray(1);
 	// layout 2 -> normal
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
 	glEnableVertexAttribArray(2);
 	// layout 3 -> color
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, color));
@@ -321,7 +288,10 @@ void	Mesh::draw() const
 
 Mesh::~Mesh()
 {
-	glDeleteBuffers(3, &_VAO);
+	glDeleteVertexArrays(1, &_VAO);
+	glDeleteBuffers(1, &_VBO);
+	glDeleteBuffers(1, &_EBO);
+	
 	std::cout
 		<< "Destructor called for class Mesh" << std::endl;
 }

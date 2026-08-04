@@ -9,14 +9,11 @@ uniform float offset;
 uniform float tanhalffov;
 
 out vec3 fragColor;
-
-uniform mat4 projection;
+out vec2 texCoord;
 
 void main()
 {
-	vec3 pos = aPos;
-	pos.y -= 2.0f;
-	pos.z -= 3.0f;
-	gl_Position = projection * vec4(pos, 1.0);
+	gl_Position = vec4(aPos.x * 1 / tanhalffov, -aPos.y * 1 / tanhalffov, (aPos.z + offset) * 0.00002, 1.0);
 	fragColor = aColor;
+	texCoord = aTexture;
 }

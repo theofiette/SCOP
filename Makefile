@@ -10,7 +10,6 @@ CPPSRC =	src/main.cpp \
 			src/Mesh.cpp \
 			src/Texture.cpp \
 			src/Shader.cpp \
-			src/stb_image.cpp\
 			src/exit.cpp
 			
 CSRC   = src/glad.c

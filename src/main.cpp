@@ -35,7 +35,7 @@ void _process_render(GLFWwindow* window) {
 
 	(void)window;
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 }
 
@@ -67,7 +67,13 @@ void init(GLFWwindow** window_ptr) {
 	glfwSetFramebufferSizeCallback(*window_ptr, _on_window_resize);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+
+	if (argc != 2)
+	{
+		std::cerr << "usage : [programme] [.obj file path]" << std::endl;
+		clean_exit(false, 1);
+	}
 
 	GLFWwindow* window = NULL;
 
@@ -79,62 +85,43 @@ int main() {
 	shader.use();
 
 	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
-	
-	// Mesh rect("mesh/1f_rectangle.obj");
-	// Mesh rect("mesh/rectangle.obj");
-	// Mesh textureRect("mesh/texture_rect.obj");
-	// Mesh logo("resources/42.obj");
-	// Mesh pyramid("mesh/pyramid.obj");
-	// Mesh cube("mesh/cube.obj");
-	Mesh teapot("resources/teapot.obj");
-	
-	Texture mire("textures/mire.tga", true);
-	Texture friends("textures/test_picture.tga", true);
-
-	//TODO : this block should be part of the texture class, but how ??.....
-	// texture repeat
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	// texture filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
+	Mesh mesh(argv[1]);
+	Texture friends("resources/textures/test_picture.tga", true);
 
 	float z_offset = 0;
+
+	mat4x4 projection = {};
+		
+	const float fov = 90.0f * M_PI / 180.0f;
+	const float ratio = 1.0f;
+	const float znear = 0.1f;
+	const float zfar = 100.0f;
+	projection.mat[0][0] = (1 / (ratio * tan(fov / 2)));
+	projection.mat[1][1] = (1 / (tan(fov/2)));
+	projection.mat[2][2] = -((zfar + znear) / (zfar - znear));
+	projection.mat[2][3] = -((2 * zfar * znear) / (zfar - znear));
+	projection.mat[3][2] = -1;
+
 
 	while (!glfwWindowShouldClose(window)) {
 		
 		_process_inputs(window);
 		_process_render(window);
 
-		// test
-		// float timeValue = glfwGetTime();
-		// float turnValue = (sin(timeValue) / 2.0f);
-		// shader.setUniform<float>("turnValue", turnValue);
-
-		// // To draw the triangle
-		// glBindVertexArray(VAO_triangle);
-		// glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		// To draw the rectangle
-		// mire.bind(0);
-
 		shader.setUniform<float>("offset", /*0 * sinf(z_offset)*/1);
 		shader.setUniform<float>("tanhalffov", tan(45 * 360 / (M_PI * 2)));
 		z_offset += 0.02;
 
-		friends.bind(1);
-		// shader.setUniform<int>("tex", 1);
-		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		friends.bind(0);
+		shader.setUniform<int>("tex", 0);
+		shader.setUniform<float[16]>("projection", projection.m);
 
-		teapot.draw();
+		mesh.draw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

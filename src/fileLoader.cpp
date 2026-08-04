@@ -22,7 +22,7 @@ namespace fileLoader {
 		}
 		catch (std::ifstream::failure &e) {
 
-			std::cout << "ERROR::FILELOADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+			std::cout << "ERROR::FILELOADER::FILE_NOT_SUCCESFULLY_READ(toString)" << std::endl;
 			clean_exit(true, 1);
 
 		}
@@ -52,6 +52,8 @@ namespace fileLoader {
 				{
 					if (word.length())
 						line.append(word + " ");
+					while (stream.peek() == ' ')
+						stream.get();
 					if (stream.peek() == '\n')
 						break ;
 				}
@@ -61,7 +63,7 @@ namespace fileLoader {
 		}
 		catch (std::ifstream::failure &e) {
 
-			std::cout << "ERROR::FILELOADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+			std::cout << "ERROR::FILELOADER::FILE_NOT_SUCCESFULLY_READ(toStringVector)" << std::endl;
 			clean_exit(true, 1);
 
 		}

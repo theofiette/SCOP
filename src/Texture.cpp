@@ -28,6 +28,8 @@ Texture::Texture(const char* path, bool flip)
 
 	if (texture.data)
 		delete texture.data;
+	
+	_initTextureParameter();
 
 	std::cout
 		<< "Default constructor called for class Texture" << std::endl;
@@ -123,7 +125,20 @@ textureData		Texture::_loadTexture(const char* path, bool flip) const
 	return (texture);
 }
 
+void	Texture::_initTextureParameter()
+{
+	// texture repeat
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
+	// texture filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+}
+	
 // Texture::Texture(const Texture &other) : _ID(other.getID())
 // {
 // 	std::cout
