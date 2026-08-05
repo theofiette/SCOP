@@ -9,7 +9,7 @@
 */
 void Mesh::_parseVertexCoordinate(const std::string &line, objFileData &data) const {
 
-	vec3				position = {};
+	vec3<float>			position = {};
 	std::stringstream	stream(line);
 	std::string			prefixe;
 
@@ -31,7 +31,7 @@ void Mesh::_parseVertexCoordinate(const std::string &line, objFileData &data) co
 */
 void Mesh::_parseVertexTexture(const std::string &line, objFileData &data) const {
 
-	vec2				textureCoord = {};
+	vec2<float>			textureCoord = {};
 	std::stringstream	stream(line);
 	std::string			prefixe;
 
@@ -54,7 +54,7 @@ void Mesh::_parseVertexTexture(const std::string &line, objFileData &data) const
 */
 void Mesh::_parseVertexNormal(const std::string &line, objFileData &data) const {
 
-	vec3				normalCoord = {};
+	vec3<float>			normalCoord = {};
 	std::stringstream	stream(line);
 	std::string			prefixe;
 
@@ -162,7 +162,7 @@ void	Mesh::_colorFaces(std::vector<Vertex> &vertices) const
 {
 	for (Vertex &vert : vertices)
 	{
-		vec3	color;
+		vec3<float>	color;
 		// float	offset = static_cast<float>(std::experimental::randint(-10, 10)) / static_cast<float>(std::experimental::randint(100, 200));
 
 		// color.x = 0.5 + offset;
@@ -178,20 +178,27 @@ void	Mesh::_colorFaces(std::vector<Vertex> &vertices) const
 }
 
 void	Mesh::_generateVerticesBuffer(
-	const objFileData &data, std::vector<Vertex> &vertices, std::vector<vec3ui> &indexes) const
+	const objFileData &data, std::vector<Vertex> &vertices, std::vector<vec3<unsigned int>> &indexes) const
 {
-	vec3ui			index;
-	unsigned int	currIndex = 0;
+	vec3<unsigned int>	index;
+	unsigned int		currIndex = 0;
+
+	unsigned int j = 0;
 
 	for (const FaceIndexes &face : data.indexes)
 	{
 		index = {};
+
+		std::cout << "Face n" << j << ":" << std::endl;
+		j++;
+
 		for (unsigned int i = 0; i < 3; i++)
 		{
 			Vertex vertex = {};
 			unsigned int coordIndex = face.positionIndex[i];
 			
 			vertex.position = data.positions[coordIndex];
+			std::cout << vertex.position << std::endl;
 			if (data.multiIndex)
 			{
 				unsigned int textureIndex = face.textureIndex[i];
@@ -235,8 +242,8 @@ Mesh::Mesh(const char* objFile)
 	// in data (parsed in file)
 	objFileData			data = {};
 	// out data (reconstructed for element buffer)
-	std::vector<Vertex>			vertices;
-	std::vector<vec3ui>			indexes; // 3 index de vertex par face 
+	std::vector<Vertex>				vertices;
+	std::vector<vec3<unsigned int>>	indexes; // 3 index de vertex par face 
 
 	data.multiIndex = false;
 	_parseFile(objFile, data); 							// Remplir la struct objFileData
@@ -254,7 +261,7 @@ Mesh::Mesh(const char* objFile)
 
 	glGenBuffers(1, &_EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indexCount * sizeof(vec3i), indexes.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indexCount * sizeof(vec3<int>), indexes.data(), GL_STATIC_DRAW);
 
 	// layout 0 -> position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));

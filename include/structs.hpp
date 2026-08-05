@@ -3,9 +3,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+template <typename T>
 struct vec2 {
-	float	x;
-	float	y;
+	T	x;
+	T	y;
 
 	bool operator==(vec2 &other) const {
 		return (
@@ -13,7 +14,7 @@ struct vec2 {
 		y == other.y
 	);}
 
-	float &operator[](unsigned int index) {
+	T &operator[](unsigned int index) {
 		switch (index) {
 			case (0):
 				return (x);
@@ -24,7 +25,7 @@ struct vec2 {
 		}
 	}
 
-	float operator[](unsigned int index) const {
+	T operator[](unsigned int index) const {
 		switch (index) {
 			case (0):
 				return (x);
@@ -36,19 +37,21 @@ struct vec2 {
 	}
 };
 
-struct vec3 {
-    float	x;
-    float	y;
-    float	z;
+template <typename T> 
+struct vec3 
+{
+    T	x;
+    T	y;
+    T	z;
 
-	bool operator==(vec3 &other) const {
+	bool operator==(const vec3 &other) const {
 		return (
 			x == other.x &&
 			y == other.y &&
 			z == other.z
 	);}
 
-	float &operator[](unsigned int index) {
+	T &operator[](unsigned int index) {
 		switch (index) {
 			case (0):
 				return (x);
@@ -61,7 +64,7 @@ struct vec3 {
 		}
 	}
 
-	float operator[](unsigned int index) const {
+	T operator[](unsigned int index) const {
 		switch (index) {
 			case (0):
 				return (x);
@@ -73,86 +76,13 @@ struct vec3 {
 				throw (std::out_of_range("vec3 invalid index"));
 		}
 	}
-};
 
-struct vec3i {
-    int	x;
-    int	y;
-    int	z;
-
-	bool operator==(vec3i &other) const {
-		return (
-			x == other.x &&
-			y == other.y &&
-			z == other.z
-	);}
-
-	int &operator[](unsigned int index) {
-		switch (index) {
-			case (0):
-				return (x);
-			case (1):
-				return (y);
-			case (2):
-				return (z);
-			default:
-				throw (std::out_of_range("vec3i invalid index"));
-		}
-	}
-
-	int operator[](unsigned int index) const {
-		switch (index) {
-			case (0):
-				return (x);
-			case (1):
-				return (y);
-			case (2):
-				return (z);
-			default:
-				throw (std::out_of_range("vec3i invalid index"));
-		}
+	friend std::ostream &operator<<(std::ostream &os, vec3 &vec) {
+		os << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
+		return (os);
 	}
 };
 
-struct vec3ui {
-    unsigned int	x;
-    unsigned int	y;
-    unsigned int	z;
-
-	bool operator==(vec3ui &other) const {
-		return (
-			x == other.x &&
-			y == other.y &&
-			z == other.z
-		);
-	}
-
-	unsigned int &operator[](unsigned int index) {
-		switch (index) {
-			case (0):
-				return (x);
-			case (1):
-				return (y);
-			case (2):
-				return (z);
-			default:
-				throw (std::out_of_range("vec3ui invalid index"));
-		}
-	}
-
-	unsigned int operator[](unsigned int index) const {
-		switch (index) {
-			case (0):
-				return (x);
-			case (1):
-				return (y);
-			case (2):
-				return (z);
-			default:
-				throw (std::out_of_range("vec3ui invalid index"));
-		}
-	}
-};
 
 typedef union mat4x4 {
 
@@ -167,12 +97,18 @@ typedef union mat4x4 {
 	struct {
 
 		float	m[16];
-
+		
 	};
 	struct {
 		float   mat[4][4];
 	};
+
 } mat4x4;
+
+# define MAT4X4(x) mat4x4 {x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x}
+# define MAT4X4_IDENTITY mat4x4 {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+# define MAT4X4_UNIFORM_SCALE(x) mat4x4 {x, 0, 0, 0, 0, x, 0, 0, 0, 0, x, 0, 0, 0, 0, 1};
+# define MAT4X4_TRANSLATION(vec3) mat4x4 {1, 0, 0, vec3.x, 0, 1, 0, vec3.y, 0, 0, 1, vec3.z, 0, 0, 0, 1};
 
 // struct vec4ui {
 // 	unsigned int	x;
@@ -182,10 +118,10 @@ typedef union mat4x4 {
 // };
 
 struct Vertex {
-    vec3	position;
-    vec2 	texture;
-    vec3 	normal;
-	vec3	color;
+    vec3<float>	position;
+    vec2<float>	texture;
+    vec3<float>	normal;
+	vec3<float>	color;
 
 	bool operator==(Vertex &other) const {
 		return (
@@ -197,7 +133,7 @@ struct Vertex {
 };
 
 struct FaceIndexes {
-	vec3ui	positionIndex;
-	vec3ui	textureIndex;
-	vec3ui	normalIndex;
+	vec3<unsigned int>	positionIndex;
+	vec3<unsigned int>	textureIndex;
+	vec3<unsigned int>	normalIndex;
 };

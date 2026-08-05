@@ -8,9 +8,9 @@
 struct objFileData {
 
 	//Vertex attributes
-	std::vector<vec3>			positions;
-	std::vector<vec2>			textures;
-	std::vector<vec3>			normals;
+	std::vector<vec3<float>>			positions;
+	std::vector<vec2<float>>			textures;
+	std::vector<vec3<float>>			normals;
 	//Faces
 	std::vector<FaceIndexes>	indexes;
 	//Are there texture and normal coordinates ?
@@ -40,7 +40,7 @@ class Mesh
 		void	_colorFaces(std::vector<Vertex> &vertices) const;
 
 		void	_generateVerticesBuffer(
-			const objFileData &data, std::vector<Vertex> &vertices, std::vector<vec3ui> &indexes) const;
+			const objFileData &data, std::vector<Vertex> &vertices, std::vector<vec3<unsigned int>> &indexes) const;
 
 		Mesh() = delete;								//Default constructor
 		Mesh	&operator=(const Mesh &other) = delete;	//Assignment operator
