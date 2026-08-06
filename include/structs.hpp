@@ -44,6 +44,10 @@ struct vec3
     T	y;
     T	z;
 
+	vec3() : x{0}, y{0}, z{0} {};
+
+	vec3(T _x, T _y, T _z) : x{_x}, y{_y}, z{_z} {};
+
 	bool operator==(const vec3 &other) const {
 		return (
 			x == other.x &&
@@ -103,12 +107,39 @@ typedef union mat4x4 {
 		float   mat[4][4];
 	};
 
+	// mat4x4() : m{} {}
+
+	// mat4x4(float f) : m{f, f, f, f,
+	// 					f, f, f, f,
+	// 					f, f, f, f,
+	// 					f, f, f, f} {};
+
 } mat4x4;
 
-# define MAT4X4(x) mat4x4 {x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x}
-# define MAT4X4_IDENTITY mat4x4 {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-# define MAT4X4_UNIFORM_SCALE(x) mat4x4 {x, 0, 0, 0, 0, x, 0, 0, 0, 0, x, 0, 0, 0, 0, 1};
-# define MAT4X4_TRANSLATION(vec3) mat4x4 {1, 0, 0, vec3.x, 0, 1, 0, vec3.y, 0, 0, 1, vec3.z, 0, 0, 0, 1};
+# define MAT4X4(x)	mat4x4 {	x, x, x, x, \
+								x, x, x, x, \
+								x, x, x, x, \
+								x, x, x, x}
+
+# define MAT4X4_IDENTITY	mat4x4 {	1, 0, 0, 0, \
+										0, 1, 0, 0, \
+										0, 0, 1, 0, \
+										0, 0, 0, 1}
+
+# define MAT4X4_UNIFORM_SCALE(x)	mat4x4 {	x, 0, 0, 0, \
+												0, x, 0, 0, \
+												0, 0, x, 0, \
+												0, 0, 0, 1}
+
+# define MAT4X4_TRANSLATION(vec3)	mat4x4 {	1, 0, 0, vec3.x, \
+												0, 1, 0, vec3.y, \
+												0, 0, 1, vec3.z, \
+												0, 0, 0, 1}
+
+# define MAT4X4_ROTATION_X(angle)	mat4x4 {	1, 0, 0, 0, \
+												0, cosf(angle), -sinf(angle), 0, \
+												0, sinf(angle), cosf(angle), 0, \
+											 	0, 0, 0, 1	}
 
 // struct vec4ui {
 // 	unsigned int	x;

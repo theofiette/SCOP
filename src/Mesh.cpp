@@ -183,14 +183,14 @@ void	Mesh::_generateVerticesBuffer(
 	vec3<unsigned int>	index;
 	unsigned int		currIndex = 0;
 
-	unsigned int j = 0;
+	// unsigned int j = 0;
 
 	for (const FaceIndexes &face : data.indexes)
 	{
 		index = {};
 
-		std::cout << "Face n" << j << ":" << std::endl;
-		j++;
+		// std::cout << "Face n" << j << ":" << std::endl;
+		// j++;
 
 		for (unsigned int i = 0; i < 3; i++)
 		{
@@ -198,7 +198,7 @@ void	Mesh::_generateVerticesBuffer(
 			unsigned int coordIndex = face.positionIndex[i];
 			
 			vertex.position = data.positions[coordIndex];
-			std::cout << vertex.position << std::endl;
+			// std::cout << vertex.position << std::endl;
 			if (data.multiIndex)
 			{
 				unsigned int textureIndex = face.textureIndex[i];
@@ -249,9 +249,13 @@ Mesh::Mesh(const char* objFile)
 	_parseFile(objFile, data); 							// Remplir la struct objFileData
 	_generateVerticesBuffer(data, vertices, indexes);	// Creer un vecteur de vertices + un vecteur de 3 indice de vertice par face
 
+
 	_vertexCount = vertices.size();
 	_indexCount = indexes.size();
-
+	
+	std::cout << "There are " << _vertexCount << " different vertices" << std::endl;
+	std::cout << "There are " << _indexCount << " indexes" << std::endl;
+	
 	glGenVertexArrays(1, &_VAO);
 	glBindVertexArray(_VAO);
 	

@@ -39,6 +39,8 @@ namespace fileLoader {
 
 		file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
+		std::cout << "toStringVector" << std::endl;
+
 		try {
 
 			file.open(path);
@@ -54,9 +56,11 @@ namespace fileLoader {
 						line.append(word + " ");
 					while (stream.peek() == ' ')
 						stream.get();
-					if (stream.peek() == '\n')
+					if (stream.peek() == '\n' || stream.peek() == '\r')
 						break ;
 				}
+
+				// std::cout << "line is : " << line << std::endl;
 				if (line.length())
 					strVector.push_back(line);
 			}

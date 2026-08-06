@@ -1,3 +1,4 @@
 https://learnopengl.com/book/book_pdf.pdf
 https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
 https://stackoverflow.com/questions/53245632/general-formula-for-perspective-projection-matrix
+https://www.geeksforgeeks.org/maths/rotation-matrix/

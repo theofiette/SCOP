@@ -8,9 +8,9 @@
 struct objFileData {
 
 	//Vertex attributes
-	std::vector<vec3<float>>			positions;
-	std::vector<vec2<float>>			textures;
-	std::vector<vec3<float>>			normals;
+	std::vector<vec3<float>>	positions;
+	std::vector<vec2<float>>	textures;
+	std::vector<vec3<float>>	normals;
 	//Faces
 	std::vector<FaceIndexes>	indexes;
 	//Are there texture and normal coordinates ?

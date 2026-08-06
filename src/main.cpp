@@ -13,6 +13,18 @@ void _on_window_resize(GLFWwindow* window, int width, int height) {
 	(void)window;
 	glViewport(0, 0, width, height);
 	std::cout << "Resizing window" << std::endl;
+
+}
+
+void _process_scroll(GLFWwindow* window, double x, double y) {
+	
+	
+	vec3<float>	*ptr;
+	
+	ptr = static_cast<vec3<float> *>(glfwGetWindowUserPointer(window));
+	ptr->z += (static_cast<float>(y) / 10.0f);
+	
+	(void)x;
 }
 
 /*
@@ -20,40 +32,49 @@ void _on_window_resize(GLFWwindow* window, int width, int height) {
 *
 *	Process function means it is called every frame.
 */
-void _process_inputs(GLFWwindow* window) {
+void _process_inputs(
+	GLFWwindow* window, vec3<float> &translation, vec3<float> &rotation) {
+
+	// static vec3<float>	translation;
+	// static vec3<float>	rotation;
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
 		glfwSetWindowShouldClose(window, true);
+		return ;
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		std::cout << "UP\n" << std::endl;
+		translation.y += 0.1f;
 	
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		std::cout << "DOWN\n" << std::endl;
+		translation.y -= 0.1f;
 	
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		std::cout << "LEFT\n" << std::endl;
+		translation.x -= 0.1f;
 	
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		std::cout << "RIGHT\n" << std::endl;
+		translation.x += 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		std::cout << "W\n" << std::endl;
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		std::cout << "A\n" << std::endl;
+		rotation.x += 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		std::cout << "S\n" << std::endl;
+		rotation.x -= 0.1f;
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		rotation.z -= 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		std::cout << "D\n" << std::endl;
+		rotation.z += 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		std::cout << "Q\n" << std::endl;
+		rotation.y -= 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		std::cout << "E\n" << std::endl;
+		rotation.y += 0.1f;
+	
+	// std::cout << translation << " | " << rotation << std::endl;
 }
 
 /*
@@ -95,6 +116,7 @@ void init(GLFWwindow** window_ptr) {
 	*window_ptr = instanciate_window();
 
 	glfwSetFramebufferSizeCallback(*window_ptr, _on_window_resize);
+	glfwSetScrollCallback(*window_ptr, _process_scroll);
 }
 
 int main(int argc, char *argv[]) {
@@ -110,22 +132,23 @@ int main(int argc, char *argv[]) {
 	init(&window);
 	
 	// Creating the vertex shader
-	Shader	shader("src/SHADERS/shader.vert",
-					 "src/SHADERS/shader.frag");
-	shader.use();
+	// Shader	shader("src/SHADERS/shader.vert",
+	// 				 "src/SHADERS/shader.frag");
+	// shader.use();
 
 	Shader	texture_shader("src/SHADERS/shader_texture.vert",
 								"src/SHADERS/shader_texture.frag");
 	texture_shader.use();
 
 	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
-	// glEnable(GL_CULL_FACE);
-	// glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
 	Mesh mesh(argv[1]);
 	Texture friends("resources/textures/test_picture.tga", true);
+	Texture skull("resources/mesh/skull/Skull.tga", true);
 
 
 	// PROJECTION MATRIX
@@ -144,23 +167,36 @@ int main(int argc, char *argv[]) {
 
 	// TRANSFORMATION MATRIX
 
-		mat4x4 transformation = MAT4X4_UNIFORM_SCALE(2.2);claer
+		mat4x4 scale_matrix;
+		mat4x4 translation_matrix; 
+		mat4x4 rotation_matrix;
 
-		vec3<float> translation_factor;
-		translation_factor.x = 0.5;
-		translation_factor.y = -0.5;
-		translation_factor.z = 1;
-		transformation = MAT4X4_TRANSLATION(translation_factor);
+		vec3<float> translation;
+		vec3<float>	rotation;	
+
+		glfwSetWindowUserPointer(window, static_cast<void *>(&translation));
 
 	while (!glfwWindowShouldClose(window)) {
 		
-		_process_inputs(window);
+		_process_inputs(window, translation, rotation);
 		_process_render(window);
 
-		friends.bind(0);
-		shader.setUniform<int>("tex", 0);
-		shader.setUniform<float[16]>("projection", projection.m);
-		shader.setUniform<float[16]>("transformation", transformation.m);
+		translation_matrix = MAT4X4_TRANSLATION(translation);
+		scale_matrix = MAT4X4_UNIFORM_SCALE(1);
+		rotation_matrix = MAT4X4_ROTATION_X(rotation.x);
+
+		skull.bind(0);
+		texture_shader.setUniform<int>("tex", 0);
+		texture_shader.setUniform<float[16]>("translate", translation_matrix.m);
+		texture_shader.setUniform<float[16]>("scale", scale_matrix.m);
+		texture_shader.setUniform<float[16]>("rotate", rotation_matrix.m);
+		texture_shader.setUniform<float[16]>("projection", projection.m);
+
+
+		// shader.setUniform<float[16]>("translate", translation_matrix.m);
+		// shader.setUniform<float[16]>("scale", scale_matrix.m);
+		// shader.setUniform<float[16]>("rotate", rotation_matrix.m);
+		// shader.setUniform<float[16]>("projection", projection.m);
 
 		mesh.draw();
 

@@ -5,14 +5,18 @@ layout (location = 1) in vec2 aTexture;
 layout (location = 2) in vec2 aNormal;
 layout (location = 3) in vec3 aColor;
 
-uniform mat4 transformation;
+uniform mat4 projection;
+
+uniform mat4 scale;
+uniform mat4 translate;
+uniform mat4 rotate;
 
 out vec3 fragColor;
 out vec2 texCoord;
 
 void main()
 {
-	gl_Position = transformation * vec4(aPos, 1.0);
+	gl_Position = projection * translate * rotate * scale * vec4(aPos, 1.0);
 	fragColor = aColor;
 	texCoord = aTexture;
 }
