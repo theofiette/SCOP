@@ -22,7 +22,7 @@ void _process_scroll(GLFWwindow* window, double x, double y) {
 	vec3<float>	*ptr;
 	
 	ptr = static_cast<vec3<float> *>(glfwGetWindowUserPointer(window));
-	ptr->z += (static_cast<float>(y) / 10.0f);
+	ptr->z += (static_cast<float>(y) / 10.0f) * 4.0;
 	
 	(void)x;
 }
@@ -147,8 +147,10 @@ int main(int argc, char *argv[]) {
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
 	Mesh mesh(argv[1]);
-	Texture friends("resources/textures/test_picture.tga", true);
-	Texture skull("resources/mesh/skull/Skull.tga", true);
+	// Texture friends("resources/textures/test_picture.tga", true);
+	// Texture skull("resources/mesh/skull/Skull.tga", true);
+	// Texture trex("resources/mesh/T-Rex/T-Rex/Textures/GRANDECO.tga", true);
+	Texture duck("resources/mesh/duck/duck.tga", true);
 
 
 	// PROJECTION MATRIX
@@ -158,7 +160,7 @@ int main(int argc, char *argv[]) {
 		const float fov = 90.0f * M_PI / 180.0f;
 		const float ratio = 1.0f;
 		const float znear = 0.1f;
-		const float zfar = 100.0f;
+		const float zfar = 1000.0f;
 		projection.mat[0][0] = (1 / (ratio * tan(fov / 2)));
 		projection.mat[1][1] = (1 / (tan(fov/2)));
 		projection.mat[2][2] = -((zfar + znear) / (zfar - znear));
@@ -185,7 +187,8 @@ int main(int argc, char *argv[]) {
 		scale_matrix = MAT4X4_UNIFORM_SCALE(1);
 		rotation_matrix = MAT4X4_ROTATION_X(rotation.x);
 
-		skull.bind(0);
+		// skull.bind(0);
+		duck.bind(0);
 		texture_shader.setUniform<int>("tex", 0);
 		texture_shader.setUniform<float[16]>("translate", translation_matrix.m);
 		texture_shader.setUniform<float[16]>("scale", scale_matrix.m);
