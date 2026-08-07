@@ -1,8 +1,6 @@
 
 #include "Mesh.hpp"
 
-// CONSTRUCTORS
-
 /*
 *	This function parse a vertice line in a .obj file and fill a position vec3 in the mesh data
 *	This function doesn't check that the coordinates are complete

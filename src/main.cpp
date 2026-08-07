@@ -8,6 +8,9 @@
 
 #include <string.h>
 
+# define WIDTH		1920.0f
+# define HEIGTH 	1080.0f
+
 void _on_window_resize(GLFWwindow* window, int width, int height) {
 
 	(void)window;
@@ -98,7 +101,7 @@ GLFWwindow* instanciate_window()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(800, 800, "./SCOP", NULL, NULL);
+	window = glfwCreateWindow(WIDTH, HEIGTH, "./SCOP", NULL, NULL);
 	if (window == NULL)
 		clean_exit(true, 1);
 
@@ -130,11 +133,6 @@ int main(int argc, char *argv[]) {
 	GLFWwindow* window = NULL;
 
 	init(&window);
-	
-	// Creating the vertex shader
-	// Shader	shader("src/SHADERS/shader.vert",
-	// 				 "src/SHADERS/shader.frag");
-	// shader.use();
 
 	Shader	texture_shader("src/SHADERS/shader_texture.vert",
 								"src/SHADERS/shader_texture.frag");
@@ -147,18 +145,14 @@ int main(int argc, char *argv[]) {
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
 	Mesh mesh(argv[1]);
-	// Texture friends("resources/textures/test_picture.tga", true);
-	// Texture skull("resources/mesh/skull/Skull.tga", true);
-	// Texture trex("resources/mesh/T-Rex/T-Rex/Textures/GRANDECO.tga", true);
 	Texture duck("resources/mesh/duck/duck.tga", true);
-
 
 	// PROJECTION MATRIX
 
 		mat4x4 projection = MAT4X4(0);
 
 		const float fov = 90.0f * M_PI / 180.0f;
-		const float ratio = 1.0f;
+		const float ratio = WIDTH / HEIGTH;
 		const float znear = 0.1f;
 		const float zfar = 1000.0f;
 		projection.mat[0][0] = (1 / (ratio * tan(fov / 2)));
@@ -172,9 +166,13 @@ int main(int argc, char *argv[]) {
 		mat4x4 scale_matrix;
 		mat4x4 translation_matrix; 
 		mat4x4 rotation_matrix;
+		
+		mat4x4 rotation_x_matrix;
+		mat4x4 rotation_y_matrix;
+		mat4x4 rotation_z_matrix;
 
 		vec3<float> translation;
-		vec3<float>	rotation;	
+		vec3<float>	rotation;
 
 		glfwSetWindowUserPointer(window, static_cast<void *>(&translation));
 
@@ -185,16 +183,24 @@ int main(int argc, char *argv[]) {
 
 		translation_matrix = MAT4X4_TRANSLATION(translation);
 		scale_matrix = MAT4X4_UNIFORM_SCALE(1);
-		rotation_matrix = MAT4X4_ROTATION_X(rotation.x);
+		rotation_x_matrix = MAT4X4_ROTATION_X(rotation.x);
+		rotation_y_matrix = MAT4X4_ROTATION_Y(rotation.y);
+		rotation_z_matrix = MAT4X4_ROTATION_Z(rotation.z);
+		rotation_matrix = rotation_z_matrix * rotation_y_matrix * rotation_x_matrix;
+
+		mat4x4 transformation = translation_matrix * rotation_matrix * scale_matrix;
+
+		// rotation_matrix = MAT4X4_ROTATION_X(rotation.x);
 
 		// skull.bind(0);
 		duck.bind(0);
 		texture_shader.setUniform<int>("tex", 0);
-		texture_shader.setUniform<float[16]>("translate", translation_matrix.m);
-		texture_shader.setUniform<float[16]>("scale", scale_matrix.m);
-		texture_shader.setUniform<float[16]>("rotate", rotation_matrix.m);
-		texture_shader.setUniform<float[16]>("projection", projection.m);
+		// texture_shader.setUniform<float[16]>("translate", translation_matrix.m);
+		// texture_shader.setUniform<float[16]>("scale", scale_matrix.m);
+		// texture_shader.setUniform<float[16]>("rotate", rotation_matrix.m);
 
+		texture_shader.setUniform<float[16]>("transformation", transformation.m);
+		texture_shader.setUniform<float[16]>("projection", projection.m);
 
 		// shader.setUniform<float[16]>("translate", translation_matrix.m);
 		// shader.setUniform<float[16]>("scale", scale_matrix.m);
