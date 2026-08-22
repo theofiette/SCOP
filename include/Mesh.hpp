@@ -37,7 +37,10 @@ class Mesh
 		void 	_parseVertexNormal(const std::string &line, objFileData &data) const;
 		void	_parseIndex(const std::string &line, objFileData &data) const;
 
-		void	_colorFaces(std::vector<Vertex> &vertices) const;
+		void	_colorFacesGrey(std::vector<Vertex> &vertices) const;
+		void	_colorFacesFun(std::vector<Vertex> &vertices) const;
+		void	_textureFaces(std::vector<Vertex> &vertices) const;
+		void	_setOriginAtCenter(std::vector<Vertex> &vertices) const;
 
 		void	_generateVerticesBuffer(
 			const objFileData &data, std::vector<Vertex> &vertices, std::vector<vec3<unsigned int>> &indexes) const;

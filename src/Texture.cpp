@@ -72,9 +72,6 @@ void _parseTgaHeader(const char *content, textureData &texture)
 }
 
 
-# define CHANNELS_IN_RGB 	3
-# define CHANNELS_IN_RGBA	4
-
 /*
 *	TODO : while this class is functionnal for the project, the tga parsing is not fully implemented
 */
@@ -119,7 +116,6 @@ textureData		Texture::_loadTexture(const char* path, bool flip) const
 	if (extension == ".tga") {
 
 		_parseTga(textureContent.c_str(), texture, flip);
-
 	}
 
 	return (texture);
@@ -138,25 +134,6 @@ void	Texture::_initTextureParameter()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 }
-	
-// Texture::Texture(const Texture &other) : _ID(other.getID())
-// {
-// 	std::cout
-// 		<< "Copy constructor called for class Texture" << std::endl;
-// };
-
-// ASSIGNEMENT OPERATOR
-
-// Texture &Texture::operator=(const Texture &other)
-// {
-// 	if (this != &other)
-// 	{
-// 		_ID = other.getID();
-// 	}
-// 	std::cout
-// 		<< "Copy assignment operator called for class Texture" << std::endl;
-// 	return (*this);
-// }
 
 // DESTRUCTOR
 

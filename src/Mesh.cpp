@@ -74,6 +74,7 @@ void Mesh::_parseVertexNormal(const std::string &line, objFileData &data) const 
 *	It splits 1 quad into 2 triangles, BUT it doesn't check that the resulting quad makes sense
 *	If the face indexes are not set in a logical order, the resulting triangles will overlap.
 *
+*	For this project, I also have to give a texture index if none is given in the .obj
 */
 void Mesh::_parseIndex(const std::string &line, objFileData &data) const {
 
@@ -156,23 +157,102 @@ void Mesh::_parseFile(const char* objFile, objFileData &data) const
 	}
 }
 
-void	Mesh::_colorFaces(std::vector<Vertex> &vertices) const
+void	Mesh::_colorFacesGrey(std::vector<Vertex> &vertices) const
 {
+	vec3<float>	color;
+
 	for (Vertex &vert : vertices)
 	{
-		vec3<float>	color;
-		// float	offset = static_cast<float>(std::experimental::randint(-10, 10)) / static_cast<float>(std::experimental::randint(100, 200));
+		float	offset = static_cast<float>(std::experimental::randint(-10, 10)) / static_cast<float>(std::experimental::randint(100, 200));
 
-		// color.x = 0.5 + offset;
-		// color.y = 0.5 + offset;
-		// color.z = 0.5 + offset;
+		color.x = 0.5 + offset;
+		color.y = 0.5 + offset;
+		color.z = 0.5 + offset;
 
+		vert.color = color;
+	}
+}
+
+void	Mesh::_colorFacesFun(std::vector<Vertex> &vertices) const
+{
+
+	vec3<float> color;
+
+	for (Vertex &vert : vertices)
+	{
 		color.x = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
 		color.y = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
 		color.z = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
 
 		vert.color = color;
 	}
+	
+}
+
+void	Mesh::_textureFaces(std::vector<Vertex> &vertices) const
+{
+	for (Vertex &vert : vertices)
+	{
+		vert.texture.x = vert.position.x;
+		vert.texture.y = vert.position.y;
+	}
+}
+
+/*
+*	This could be done more efficiently through the initial file parsing, 
+*	but since I find it odd to move the object origin and I believe it doesn't change much
+*	on the efficiency side, for now I'll keep the logic that way for convenience.
+*/
+// TODO : not working
+void	Mesh::_setOriginAtCenter(std::vector<Vertex> &vertices) const
+{
+	float	xmin = std::numeric_limits<float>::max();
+	float	ymin = xmin;
+	float	zmin = xmin;
+	float	xmax = std::numeric_limits<float>::min();
+	float	ymax = xmax;
+	float	zmax = xmax;
+
+	for (Vertex &vert : vertices)
+	{
+		if (vert.position.x < xmin)
+			xmin = vert.position.x;
+		if (vert.position.x > xmax)
+			xmax = vert.position.x;
+		if (vert.position.y < ymin)
+			ymin = vert.position.y;
+		if (vert.position.y > ymax)
+			ymax = vert.position.y;
+		if (vert.position.z < zmin)
+			zmin = vert.position.z;
+		if (vert.position.z > zmax)
+			zmax = vert.position.z;
+	}
+
+	
+	float xstep = xmin + xmax;
+	float ystep = ymin - ymax;
+	float zstep = zmin - zmax;
+	
+
+	std::cout << "xmin is " << xmin << std::endl;
+	std::cout << "xmax is " << xmax << std::endl;	
+	std::cout << "ymin is " << ymin << std::endl;
+	std::cout << "ymax is " << ymax << std::endl;	
+	std::cout << "zmin is " << zmin << std::endl;
+	std::cout << "zmax is " << zmax << std::endl;
+
+	std::cout << "xstep is " << xstep << std::endl;
+	std::cout << "ystep is " << ystep << std::endl;
+	std::cout << "zstep is " << zstep << std::endl;
+
+	for (Vertex &vert : vertices)
+	{
+		vert.position.x += xstep;
+		vert.position.y += ystep;
+		vert.position.z += zstep;
+	}
+	
 }
 
 void	Mesh::_generateVerticesBuffer(
@@ -181,14 +261,9 @@ void	Mesh::_generateVerticesBuffer(
 	vec3<unsigned int>	index;
 	unsigned int		currIndex = 0;
 
-	// unsigned int j = 0;
-
 	for (const FaceIndexes &face : data.indexes)
 	{
 		index = {};
-
-		// std::cout << "Face n" << j << ":" << std::endl;
-		// j++;
 
 		for (unsigned int i = 0; i < 3; i++)
 		{
@@ -196,7 +271,6 @@ void	Mesh::_generateVerticesBuffer(
 			unsigned int coordIndex = face.positionIndex[i];
 			
 			vertex.position = data.positions[coordIndex];
-			// std::cout << vertex.position << std::endl;
 			if (data.multiIndex)
 			{
 				unsigned int textureIndex = face.textureIndex[i];
@@ -212,12 +286,10 @@ void	Mesh::_generateVerticesBuffer(
 				if (vert == vertex)
 					break ;
 				vertexIndex ++;
-			};
-			if (vertexIndex < vertices.size())
-			{
-				index[i] = vertexIndex;
 			}
-			else 
+			if (vertexIndex < vertices.size())
+				index[i] = vertexIndex;
+			else
 			{
 				vertices.push_back(vertex);
 				index[i] = currIndex ++;
@@ -225,15 +297,17 @@ void	Mesh::_generateVerticesBuffer(
 		}
 		indexes.push_back(index);
 	}
-	_colorFaces(vertices);
+	if (!data.multiIndex)
+		_textureFaces(vertices);
+	_colorFacesGrey(vertices);
+	_setOriginAtCenter(vertices);
 }
 
 /*
 * Mesh constructor function, based on an .obj file.
 * Since the .obj is based on multi-indexing vertices and openGL doesn't allow this,
 * the first step is to parse the obj file to create vectors of attributes and a vector of FaceIndexes structs.
-* The second step is to create a vector of the different vertices (Vertex) struct, and a vector of 
-* a vector of index from these.
+* The second step is to create a vector of the different vertices (Vertex) struct, and a vector of index from these.
 */
 Mesh::Mesh(const char* objFile)
 {
@@ -244,9 +318,8 @@ Mesh::Mesh(const char* objFile)
 	std::vector<vec3<unsigned int>>	indexes; // 3 index de vertex par face 
 
 	data.multiIndex = false;
-	_parseFile(objFile, data); 							// Remplir la struct objFileData
-	_generateVerticesBuffer(data, vertices, indexes);	// Creer un vecteur de vertices + un vecteur de 3 indice de vertice par face
-
+	_parseFile(objFile, data);
+	_generateVerticesBuffer(data, vertices, indexes);
 
 	_vertexCount = vertices.size();
 	_indexCount = indexes.size();

@@ -84,25 +84,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 		<< "Default constructor called for class Shader" << std::endl;
 }
 
-// Shader::Shader(const Shader &other) : _ID(other.getID())
-// {
-// 	std::cout
-// 		<< "Copy constructor called for class Shader" << std::endl;
-// };
-
-// // ASSIGNEMENT OPERATOR
-
-// Shader &Shader::operator=(const Shader &other)
-// {
-// 	if (this != &other)
-// 	{
-// 		_ID = other.getID();
-// 	}
-// 	std::cout
-// 		<< "Copy assignment operator called for class Shader" << std::endl;
-// 	return (*this);
-// }
-
 // DESTRUCTOR
 
 Shader::~Shader()

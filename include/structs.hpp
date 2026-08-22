@@ -192,3 +192,10 @@ struct FaceIndexes {
 	vec3<unsigned int>	textureIndex;
 	vec3<unsigned int>	normalIndex;
 };
+
+// The variables carried through the code
+// Used when user input cannot be processed right away
+struct registre {
+	int		zMarker;
+	bool	shaderSwitch;
+};

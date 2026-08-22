@@ -6,11 +6,14 @@ INCLUDES= -Iinclude
 BUILD= .build/
 
 CPPSRC =	src/main.cpp \
+			src/exit.cpp \
 			src/fileLoader.cpp \
+			src/init.cpp \
+			src/inputs.cpp \
 			src/Mesh.cpp \
-			src/Texture.cpp \
+			src/render.cpp \
 			src/Shader.cpp \
-			src/exit.cpp
+			src/Texture.cpp 
 			
 CSRC   = src/glad.c
 
