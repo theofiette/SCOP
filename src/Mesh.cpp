@@ -1,5 +1,6 @@
 
 #include "Mesh.hpp"
+#include "fileLoader.hpp"
 
 /*
 *	This function parse a vertice line in a .obj file and fill a position vec3 in the mesh data
@@ -354,6 +355,11 @@ Mesh::Mesh(const char* objFile)
 
 	std::cout
 		<< "Default constructor called for class Mesh" << std::endl;
+}
+
+Transform &Mesh::getTransform()
+{
+	return (_transform);
 }
 
 void	Mesh::draw() const

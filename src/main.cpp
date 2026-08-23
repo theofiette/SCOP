@@ -1,20 +1,36 @@
-#include <scop.hpp>
+#include "scop.hpp"
+#include "classes.hpp"
 
 /*
 *	The process function responsible for rendering.
 *
 *	Process function means it is called every frame.
 */
-void _processRender(GLFWwindow* window, const vec3<float> &translation,
-	const vec3<float>rotation, mat4x4 &transformation)
+void _processRender(GLFWwindow* window, mat4x4 &projection, Mesh &mesh, registre &registre,
+	Material &material)
 {
-	
-	(void)window;
+	Shader		*currentShader;
+	static bool	textureToggle = false;
+	mat4x4	transformation;
+
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	transformation = _createTransformationMat(mesh.getTransform());
 
-	transformation = _createTransformationMat(translation, rotation);
+	if (registre.shaderSwitch)
+	{
+		textureToggle = !textureToggle;
+		registre.shaderSwitch = false;
+	}
 
+	currentShader = (textureToggle ? &material.getTextureShader() : &material.getColorShader());
+	currentShader->use();
+	currentShader->setUniform<float[16]>("projection", projection.m);
+	currentShader->setUniform<float[16]>("transformation", transformation.m);
+	mesh.draw();
+
+	glfwSwapBuffers(window);
 }
 
 int main(int argc, char *argv[]) {
@@ -25,62 +41,20 @@ int main(int argc, char *argv[]) {
 		clean_exit(false, 1);
 	}
 
-	GLFWwindow* window = NULL;
-
-	init(&window);
-
-	Shader	texture_shader("src/SHADERS/shader_texture.vert",
-								"src/SHADERS/shader_texture.frag");
-	Shader	color_shader("src/SHADERS/shader_color.vert",
-								"src/SHADERS/shader_color.frag");
-	
-	Mesh mesh(argv[1]);
-
-	//TODO: Could get the texture directly via parsing the .mtl
-	Texture texture(argc == 3 ? argv[2] : BASIC_TEXTURE_PATH, true);
-
-	// PROJECTION MATRIX
-
-	mat4x4 projection = _createProjectionMat();
-
-	// TRANSFORMATION MATRIX
-	
-	mat4x4		transformation;
-	vec3<float> translation;
-	vec3<float>	rotation;
-
+	GLFWwindow*		window = NULL;
 	struct registre registre = {};
-	glfwSetWindowUserPointer(window, static_cast<void *>(&registre));
 
-	bool textureToggle = false;
+	init(&window, &registre);
 
-	texture.bind(0);
-	texture_shader.setUniform<int>("tex", 0);
+	Mesh 		mesh(argv[1]);
+	Material	material(argc == 3 ? argv[2] : BASIC_TEXTURE_PATH);
+	// TODO : camera classe
+	mat4x4 		projection = _createProjectionMat();
 
 	while (!glfwWindowShouldClose(window)) {
 		
-		_processInputs(window, translation, rotation);
-		_processRender(window, translation, rotation, transformation);
-		
-		texture_shader.setUniform<float[16]>("projection", projection.m);
-		texture_shader.setUniform<float[16]>("transformation", transformation.m);
-		color_shader.setUniform<float[16]>("projection", projection.m);
-		color_shader.setUniform<float[16]>("transformation", transformation.m);
-		// color_shader.use();
-
-		mesh.draw();
-
-		if (registre.shaderSwitch)
-		{
-			textureToggle = !textureToggle;
-			registre.shaderSwitch = false;
-		}
-		if (textureToggle)
-			texture_shader.use();
-		else
-			color_shader.use();
-
-		glfwSwapBuffers(window);
+		_processInputs(window, mesh.getTransform());
+		_processRender(window, projection, mesh, registre, material);
 		glfwPollEvents();
 	}
 

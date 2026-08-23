@@ -1,5 +1,6 @@
 
 #include "Texture.hpp"
+#include "fileLoader.hpp"
 
 unsigned int	Texture::getID() const
 {

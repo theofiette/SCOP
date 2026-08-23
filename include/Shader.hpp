@@ -1,8 +1,12 @@
 # pragma once
 
-# include <scop.hpp>
+// # include "scop.hpp"
 
 # include <string>
+# include <iostream>
+# include <ostream>
+# include "opengl.hpp"
+# include "fileLoader.hpp"
 
 class Shader
 {
@@ -21,7 +25,6 @@ class Shader
 	public:
 
 		unsigned int		getID() const;
-
 		void				use() const;
 
 		template <typename T>
@@ -29,7 +32,6 @@ class Shader
 
 		// Orthodox Canonical Form
 					Shader(const char* vertexPath, const char* fragmentPath);
-					// Shader(const char** pathArray, unsigned int bitMask);
 		virtual 	~Shader();						//Destructor
 };
 # include <Shader.tpp>

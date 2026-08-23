@@ -1,4 +1,5 @@
 
+#include "scop.hpp"
 #include "Shader.hpp"
 
 unsigned int Shader::getID() const

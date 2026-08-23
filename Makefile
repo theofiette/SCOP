@@ -12,6 +12,7 @@ CPPSRC =	src/main.cpp \
 			src/inputs.cpp \
 			src/Mesh.cpp \
 			src/render.cpp \
+			src/Material.cpp \
 			src/Shader.cpp \
 			src/Texture.cpp 
 			

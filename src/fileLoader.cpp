@@ -1,5 +1,6 @@
 
 #include "scop.hpp"
+#include "fileLoader.hpp"
 
 namespace fileLoader {
 

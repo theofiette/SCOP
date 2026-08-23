@@ -19,7 +19,7 @@ GLFWwindow* instanciate_window()
 	return (window);
 }
 
-void init(GLFWwindow** window_ptr) {
+void init(GLFWwindow** window_ptr, registre *registrePtr) {
 
 	if (!glfwInit())
 		clean_exit(false, 1); 
@@ -31,4 +31,6 @@ void init(GLFWwindow** window_ptr) {
 	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+
+	glfwSetWindowUserPointer(*window_ptr, static_cast<void *>(registrePtr));
 }

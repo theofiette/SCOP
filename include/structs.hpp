@@ -1,7 +1,7 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+# include "opengl.hpp"
+# include <vector>
 
 template <typename T>
 struct vec2 {
@@ -225,10 +225,29 @@ struct VertexHash
 
 //-------------------------------------------------------------
 
+struct Transform {
+	vec3<float> translation;
+	vec3<float>	rotation;
+	vec3<float> scale;
+};
+
 struct FaceIndexes {
 	vec3<unsigned int>	positionIndex;
 	vec3<unsigned int>	textureIndex;
 	vec3<unsigned int>	normalIndex;
+};
+
+struct objFileData {
+
+	//Vertex attributes
+	std::vector<vec3<float>>	positions;
+	std::vector<vec2<float>>	textures;
+	std::vector<vec3<float>>	normals;
+	//Faces
+	std::vector<FaceIndexes>	indexes;
+	//Are there texture and normal coordinates ?
+	bool						multiIndex;
+
 };
 
 // The variables carried through the code

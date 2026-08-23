@@ -6,7 +6,7 @@
 # include <sstream>
 # include <vector>
 
-#include "scop.hpp"
+// #include "scop.hpp"
 
 namespace fileLoader {
 

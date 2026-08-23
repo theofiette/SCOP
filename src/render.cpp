@@ -1,7 +1,7 @@
 #include "scop.hpp"
+#include "Material.hpp"
 
-mat4x4 _createTransformationMat(
-	const vec3<float> &translation, const vec3<float>rotation)
+mat4x4 _createTransformationMat(const Transform &transform)
 {
 	mat4x4 res;
 
@@ -14,11 +14,11 @@ mat4x4 _createTransformationMat(
 	mat4x4 rotation_y_matrix;
 	mat4x4 rotation_z_matrix;
 	
-	translation_matrix = MAT4X4_TRANSLATION(translation);
+	translation_matrix = MAT4X4_TRANSLATION(transform.translation);
 	scale_matrix = MAT4X4_UNIFORM_SCALE(1);
-	rotation_x_matrix = MAT4X4_ROTATION_X(rotation.x);
-	rotation_y_matrix = MAT4X4_ROTATION_Y(rotation.y);
-	rotation_z_matrix = MAT4X4_ROTATION_Z(rotation.z);
+	rotation_x_matrix = MAT4X4_ROTATION_X(transform.rotation.x);
+	rotation_y_matrix = MAT4X4_ROTATION_Y(transform.rotation.y);
+	rotation_z_matrix = MAT4X4_ROTATION_Z(transform.rotation.z);
 	rotation_matrix = rotation_z_matrix * rotation_y_matrix * rotation_x_matrix;
 	res = translation_matrix * rotation_matrix * scale_matrix;
 

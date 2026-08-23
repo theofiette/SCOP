@@ -23,16 +23,16 @@ void _onScroll(GLFWwindow* window, double x, double y) {
 }
 
 void _processSensibilityInputs(
-	GLFWwindow* window, float &sensi, bool &sensiAffectsRotation)
+	GLFWwindow* window, float &sensi, bool &sensiOnRotation)
 {
 	static bool		sensiRotationKeyHold = false;
 	static bool		sensiVariationKeyHold = false;
+	int 			inputAxis = 0;
 
 	if (glfwGetKey(window, GLFW_KEY_KP_MULTIPLY) == GLFW_PRESS)
 	{
-		if (sensiRotationKeyHold)
-			return;
-		sensiAffectsRotation = !sensiAffectsRotation;
+		if (sensiRotationKeyHold) 	return;
+		sensiOnRotation = !sensiOnRotation;
 		sensiRotationKeyHold = true;
 	}
 	else if (sensiRotationKeyHold)
@@ -41,48 +41,43 @@ void _processSensibilityInputs(
 	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS
 		|| glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
 	{
-		if (sensiVariationKeyHold)
-			return;
-		int input = 0;
+		if (sensiVariationKeyHold) return;
 		if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
-			input += 1;
+			inputAxis += 1;
 		if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
-			input -= 1;
-		
-		sensi = std::clamp(sensi + (input * SENSIBILITY_STEP), SENSIBILITY_MIN, SENSIBILITY_MAX);
+			inputAxis -= 1;	
+		sensi = std::clamp(sensi + (inputAxis * SENSIBILITY_STEP), SENSIBILITY_MIN, SENSIBILITY_MAX);
 	}
-	else if (sensiVariationKeyHold)
-		sensiVariationKeyHold = false;
+	else if (sensiVariationKeyHold) sensiVariationKeyHold = false;
 }
 
-void _processTransformationInputs(GLFWwindow *window, vec3<float> &translation, 
-		vec3<float> &rotation, float sensi, bool sensiAffectsRotation)
+void _processTransformationInputs(GLFWwindow *window, Transform &transform, float sensi, bool sensiOnRotation)
 {
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		translation.y += SENSIBILITY_BASE * sensi;	
+		transform.translation.y += SENSI_BASE * sensi;	
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		translation.y -= SENSIBILITY_BASE * sensi;
+		transform.translation.y -= SENSI_BASE * sensi;
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		translation.x -= SENSIBILITY_BASE * sensi;
+		transform.translation.x -= SENSI_BASE * sensi;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		translation.x += SENSIBILITY_BASE * sensi;
+		transform.translation.x += SENSI_BASE * sensi;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		rotation.x += sensiAffectsRotation ? SENSIBILITY_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.x += sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		rotation.x -= sensiAffectsRotation ? SENSIBILITY_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.x -= sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		rotation.z -= sensiAffectsRotation ? SENSIBILITY_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.z -= sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		rotation.z += sensiAffectsRotation ? SENSIBILITY_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.z += sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		rotation.y -= sensiAffectsRotation ? SENSIBILITY_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.y -= sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		rotation.y += sensiAffectsRotation ? SENSIBILITY_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.y += sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
 	
 	registre *reg = static_cast<registre *>(glfwGetWindowUserPointer(window));
 	if (reg->zMarker)
 	{
-		translation.z += SENSIBILITY_BASE * sensi * reg->zMarker;
+		transform.translation.z += SENSI_BASE * sensi * reg->zMarker;
 		reg->zMarker = 0;
 	}
 }
@@ -110,10 +105,10 @@ void _processRenderInputs(GLFWwindow *window)
 *	Process function means it is called every frame.
 */
 void _processInputs(
-	GLFWwindow* window, vec3<float> &translation, vec3<float> &rotation) {
+	GLFWwindow* window, Transform &transform) {
 
 	static float	sensi = 0.5;
-	static bool		sensiAffectsRotation = false;
+	static bool		sensiOnRotation = false;
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
@@ -122,7 +117,7 @@ void _processInputs(
 	}
 
 	_processRenderInputs(window);
-	_processSensibilityInputs(window, sensi, sensiAffectsRotation);
-	_processTransformationInputs(window, translation, rotation, sensi, sensiAffectsRotation);
+	_processSensibilityInputs(window, sensi, sensiOnRotation);
+	_processTransformationInputs(window, transform, sensi, sensiOnRotation);
 }
 
