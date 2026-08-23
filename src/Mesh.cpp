@@ -203,13 +203,12 @@ void	Mesh::_textureFaces(std::vector<Vertex> &vertices) const
 *	but since I find it odd to move the object origin and I believe it doesn't change much
 *	on the efficiency side, for now I'll keep the logic that way for convenience.
 */
-// TODO : not working
 void	Mesh::_setOriginAtCenter(std::vector<Vertex> &vertices) const
 {
 	float	xmin = std::numeric_limits<float>::max();
 	float	ymin = xmin;
 	float	zmin = xmin;
-	float	xmax = std::numeric_limits<float>::min();
+	float	xmax = std::numeric_limits<float>::lowest();
 	float	ymax = xmax;
 	float	zmax = xmax;
 
@@ -228,38 +227,43 @@ void	Mesh::_setOriginAtCenter(std::vector<Vertex> &vertices) const
 		if (vert.position.z > zmax)
 			zmax = vert.position.z;
 	}
-
 	
-	float xstep = xmin + xmax;
-	float ystep = ymin - ymax;
-	float zstep = zmin - zmax;
-	
+	float xstep = 0;
+	float ystep = 0;
+	float zstep = 0;
+	float xrange;
+	float yrange;
+	float zrange;
 
-	std::cout << "xmin is " << xmin << std::endl;
-	std::cout << "xmax is " << xmax << std::endl;	
-	std::cout << "ymin is " << ymin << std::endl;
-	std::cout << "ymax is " << ymax << std::endl;	
-	std::cout << "zmin is " << zmin << std::endl;
-	std::cout << "zmax is " << zmax << std::endl;
-
-	std::cout << "xstep is " << xstep << std::endl;
-	std::cout << "ystep is " << ystep << std::endl;
-	std::cout << "zstep is " << zstep << std::endl;
-
+	if (fabs(xmax + xmin) > __DBL_EPSILON__)
+	{
+		xrange = (fabs(xmax) > fabs(xmin) ? fabs(xmax) + xmin : fabs(xmin) - xmax) / 2.0f;
+		xstep = (fabs(xmax) > fabs(xmin) ? -xrange : xrange);
+	}
+	if (fabs(ymax + ymin) > __DBL_EPSILON__)
+	{
+		yrange = (fabs(ymax) > fabs(ymin) ? fabs(ymax) + ymin : fabs(ymin) - ymax) / 2.0f;
+		ystep = (fabs(ymax) > fabs(ymin) ? -yrange : yrange);
+	}
+	if (fabs(zmax + zmin) > __DBL_EPSILON__)
+	{
+		zrange = (fabs(zmax) > fabs(zmin) ? fabs(zmax) + zmin : fabs(zmin) - zmax) / 2.0f;
+		zstep = (fabs(zmax) > fabs(zmin) ? -zrange : zrange);
+	}
 	for (Vertex &vert : vertices)
 	{
 		vert.position.x += xstep;
 		vert.position.y += ystep;
 		vert.position.z += zstep;
 	}
-	
 }
 
 void	Mesh::_generateVerticesBuffer(
 	const objFileData &data, std::vector<Vertex> &vertices, std::vector<vec3<unsigned int>> &indexes) const
 {
-	vec3<unsigned int>	index;
-	unsigned int		currIndex = 0;
+	vec3<unsigned int>		index;
+	std::unordered_map<Vertex, int, VertexHash>	verticesMap;
+	unsigned int			currIndex = 0;
 
 	for (const FaceIndexes &face : data.indexes)
 	{
@@ -280,19 +284,16 @@ void	Mesh::_generateVerticesBuffer(
 				vertex.normal = data.normals[normalIndex];
 			}
 
-			unsigned int vertexIndex = 0;
-			for (const Vertex &vert : vertices)
-			{
-				if (vert == vertex)
-					break ;
-				vertexIndex ++;
-			}
-			if (vertexIndex < vertices.size())
-				index[i] = vertexIndex;
-			else
+			std::unordered_map<Vertex, int, VertexHash>::iterator ite = verticesMap.find(vertex);
+			if (ite == verticesMap.end())
 			{
 				vertices.push_back(vertex);
-				index[i] = currIndex ++;
+				verticesMap.insert({vertex, currIndex});
+				index[i] = currIndex++;
+			}
+			else
+			{
+				index[i] = ite->second;
 			}
 		}
 		indexes.push_back(index);

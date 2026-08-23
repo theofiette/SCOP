@@ -19,6 +19,9 @@
 # define BASIC_TEXTURE_PATH	"resources/textures/dog.tga"
 // # define BASIC_TEXTURE_PATH	"resources/textures/mire.tga"
 
+// used for better hash scattering
+# define GOLDEN_RATIO	0x9e3779b9
+
 // OpenGL
 # include <glad/glad.h>
 # include <GLFW/glfw3.h>
@@ -29,6 +32,7 @@
 # include <stdlib.h>
 # include <iostream>
 # include <string.h>
+# include <unordered_map>
 
 # include <algorithm>
 
