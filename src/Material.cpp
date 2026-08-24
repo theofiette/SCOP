@@ -11,8 +11,6 @@ _colorShader(COLOR_SHADER_VERT, COLOR_SHADER_FRAG)
 {
 	_texture.bind(0);
 	_textureShader.setUniform<int>("tex", 0);
-	std::cout
-		<< "Default constructor called for class Material" << std::endl;
 }
 
 Texture &Material::getTexture()
@@ -34,6 +32,4 @@ Shader	&Material::getColorShader()
 
 Material::~Material()
 {
-	std::cout
-		<< "Destructor called for class Material" << std::endl;
 }

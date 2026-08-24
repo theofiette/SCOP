@@ -81,8 +81,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	glDeleteShader(vertex_id);
 	glDeleteShader(fragment_id);
 
-	std::cout
-		<< "Default constructor called for class Shader" << std::endl;
 }
 
 // DESTRUCTOR
@@ -90,6 +88,4 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 Shader::~Shader()
 {
 	glDeleteProgram(_ID);
-	std::cout
-		<< "Destructor called for class Shader" << std::endl;
 }

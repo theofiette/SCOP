@@ -10,8 +10,9 @@ CPPSRC =	src/main.cpp \
 			src/fileLoader.cpp \
 			src/init.cpp \
 			src/inputs.cpp \
-			src/Mesh.cpp \
 			src/render.cpp \
+			src/Camera.cpp \
+			src/Mesh.cpp \
 			src/Material.cpp \
 			src/Shader.cpp \
 			src/Texture.cpp 

@@ -4,7 +4,6 @@ void _onWindowResize(GLFWwindow* window, int width, int height) {
 
 	(void)window;
 	glViewport(0, 0, width, height);
-
 }
 
 /*
@@ -14,10 +13,10 @@ void _onWindowResize(GLFWwindow* window, int width, int height) {
 */
 void _onScroll(GLFWwindow* window, double x, double y) {
 	
-	int	*zMarker;
-	
-	zMarker = static_cast<int *>(glfwGetWindowUserPointer(window));
-	(y > 0 ? *zMarker += 1 : *zMarker -= 1);
+	registre	*windowContext;
+
+	windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
+	(y > 0 ? windowContext->zMarker++ : windowContext->zMarker--);
 	
 	(void)x;
 }
@@ -31,9 +30,11 @@ void _processSensibilityInputs(
 
 	if (glfwGetKey(window, GLFW_KEY_KP_MULTIPLY) == GLFW_PRESS)
 	{
-		if (sensiRotationKeyHold) 	return;
-		sensiOnRotation = !sensiOnRotation;
-		sensiRotationKeyHold = true;
+		if (!sensiRotationKeyHold)
+		{
+			sensiOnRotation = !sensiOnRotation;
+			sensiRotationKeyHold = true;
+		}
 	}
 	else if (sensiRotationKeyHold)
 		sensiRotationKeyHold = false;
@@ -41,44 +42,49 @@ void _processSensibilityInputs(
 	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS
 		|| glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
 	{
-		if (sensiVariationKeyHold) return;
-		if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
-			inputAxis += 1;
-		if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
-			inputAxis -= 1;	
-		sensi = std::clamp(sensi + (inputAxis * SENSIBILITY_STEP), SENSIBILITY_MIN, SENSIBILITY_MAX);
+		if (!sensiVariationKeyHold)
+		{
+			if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
+				inputAxis += 1;
+			if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
+				inputAxis -= 1;	
+			sensi = std::clamp(sensi + (inputAxis * SENSIVITY_STEP), SENSIVITY_MIN, SENSIVITY_MAX);
+		}
 	}
 	else if (sensiVariationKeyHold) sensiVariationKeyHold = false;
 }
 
 void _processTransformationInputs(GLFWwindow *window, Transform &transform, float sensi, bool sensiOnRotation)
 {
+	float rotationStep = SENSI_BASE * sensi / 4.0f;
+	float translationStep = SENSI_BASE * sensi;
+
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		transform.translation.y += SENSI_BASE * sensi;	
+		transform.translation.y += translationStep;	
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		transform.translation.y -= SENSI_BASE * sensi;
+		transform.translation.y -= translationStep;
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		transform.translation.x -= SENSI_BASE * sensi;
+		transform.translation.x -= translationStep;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		transform.translation.x += SENSI_BASE * sensi;
+		transform.translation.x += translationStep;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		transform.rotation.x += sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.x += sensiOnRotation ? rotationStep : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		transform.rotation.x -= sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.x -= sensiOnRotation ? rotationStep : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		transform.rotation.z -= sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.z -= sensiOnRotation ? rotationStep : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		transform.rotation.z += sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.z += sensiOnRotation ? rotationStep : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		transform.rotation.y -= sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.y -= sensiOnRotation ? rotationStep : 0.1f;
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		transform.rotation.y += sensiOnRotation ? SENSI_BASE * sensi / 4.0f : 0.1f;
+		transform.rotation.y += sensiOnRotation ? rotationStep : 0.1f;
 	
-	registre *reg = static_cast<registre *>(glfwGetWindowUserPointer(window));
-	if (reg->zMarker)
+	registre *windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
+	if (windowContext->zMarker)
 	{
-		transform.translation.z += SENSI_BASE * sensi * reg->zMarker;
-		reg->zMarker = 0;
+		transform.translation.z += SENSI_BASE * sensi * windowContext->zMarker;
+		windowContext->zMarker = 0;
 	}
 }
 
@@ -86,14 +92,14 @@ void _processRenderInputs(GLFWwindow *window)
 {
 	static bool	shaderSwitchKeyHold = false;
 
-	if (glfwGetKey(window, GLFW_KEY_APOSTROPHE))
+	if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS)
 	{
 		if (shaderSwitchKeyHold)
 			return;
 		shaderSwitchKeyHold = true;
 
-		registre *reg = static_cast<registre *>(glfwGetWindowUserPointer(window));
-		reg->shaderSwitch = true;
+		registre *windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
+		windowContext->textureToggle = !windowContext->textureToggle;
 	}
 	else if (shaderSwitchKeyHold)
 		shaderSwitchKeyHold = false;
@@ -101,13 +107,12 @@ void _processRenderInputs(GLFWwindow *window)
 
 /*
 *	The process function responsible of reacting to user inputs.
-*
-*	Process function means it is called every frame.
+*	Called every frame.
 */
 void _processInputs(
 	GLFWwindow* window, Transform &transform) {
 
-	static float	sensi = 0.5;
+	static float	sensi = 0.5f;
 	static bool		sensiOnRotation = false;
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)

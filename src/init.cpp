@@ -1,6 +1,6 @@
 #include "scop.hpp"
 
-GLFWwindow* instanciate_window()
+GLFWwindow* instantiate_window()
 {
 	GLFWwindow* window = NULL;
 
@@ -8,7 +8,7 @@ GLFWwindow* instanciate_window()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(WIDTH, HEIGTH, "./SCOP", NULL, NULL);
+	window = glfwCreateWindow(WIDTH, HEIGHT, "SCOP", NULL, NULL);
 	if (window == NULL)
 		clean_exit(true, 1);
 
@@ -19,11 +19,17 @@ GLFWwindow* instanciate_window()
 	return (window);
 }
 
-void init(GLFWwindow** window_ptr, registre *registrePtr) {
+void init(int argc, GLFWwindow** window_ptr, registre *registrePtr) {
+
+	if (argc != 2 && argc != 3)
+	{
+		std::cerr << "usage : [programme] [.obj file path] (.tga file path)" << std::endl;
+		clean_exit(false, 1);
+	}
 
 	if (!glfwInit())
 		clean_exit(false, 1); 
-	*window_ptr = instanciate_window();
+	*window_ptr = instantiate_window();
 
 	glfwSetFramebufferSizeCallback(*window_ptr, _onWindowResize);
 	glfwSetScrollCallback(*window_ptr, _onScroll);

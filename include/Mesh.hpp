@@ -1,9 +1,13 @@
 # pragma once
 
-# include "scop.hpp"
+// # include "scop.hpp"
 # include <vector>
 # include <map>
 # include <experimental/random>
+# include <ostream>
+# include <unordered_map>
+# include "define.hpp"
+# include "structs.hpp"
 
 class Mesh
 {
@@ -41,6 +45,7 @@ class Mesh
 	public:
 
 		Transform	&getTransform();
+		mat4x4		constructTransformationMatrix() const;
 		void		draw() const;
 
 		Mesh(const char* objFile);

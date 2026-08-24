@@ -31,9 +31,6 @@ Texture::Texture(const char* path, bool flip)
 		delete texture.data;
 	
 	_initTextureParameter();
-
-	std::cout
-		<< "Default constructor called for class Texture" << std::endl;
 }
 
 void printTgaHeader(t_tgaHeader *header)
@@ -141,6 +138,4 @@ void	Texture::_initTextureParameter()
 Texture::~Texture()
 {
 	glDeleteTextures(1, &_ID);
-	std::cout
-		<< "Destructor called for class Texture" << std::endl;
 }

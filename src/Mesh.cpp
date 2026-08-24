@@ -311,7 +311,8 @@ void	Mesh::_generateVerticesBuffer(
 * the first step is to parse the obj file to create vectors of attributes and a vector of FaceIndexes structs.
 * The second step is to create a vector of the different vertices (Vertex) struct, and a vector of index from these.
 */
-Mesh::Mesh(const char* objFile)
+Mesh::Mesh(const char* objFile) :
+_transform(vec3<float>(0.0, 0.0, -5.0), vec3<float>(0.0, 0.0, 0.0), vec3<float>(1.0, 1.0, 1.0))
 {
 	// in data (parsed in file)
 	objFileData			data = {};
@@ -325,9 +326,6 @@ Mesh::Mesh(const char* objFile)
 
 	_vertexCount = vertices.size();
 	_indexCount = indexes.size();
-	
-	std::cout << "There are " << _vertexCount << " different vertices" << std::endl;
-	std::cout << "There are " << _indexCount << " indexes" << std::endl;
 	
 	glGenVertexArrays(1, &_VAO);
 	glBindVertexArray(_VAO);
@@ -352,9 +350,29 @@ Mesh::Mesh(const char* objFile)
 	// layout 3 -> color
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, color));
 	glEnableVertexAttribArray(3);
+}
 
-	std::cout
-		<< "Default constructor called for class Mesh" << std::endl;
+mat4x4	Mesh::constructTransformationMatrix() const
+{
+	mat4x4 transformation;
+
+	mat4x4 scale_matrix;
+	mat4x4 translation_matrix;
+	mat4x4 rotation_matrix;
+	
+	mat4x4 rotation_x_matrix;
+	mat4x4 rotation_y_matrix;
+	mat4x4 rotation_z_matrix;
+	
+	translation_matrix = MAT4X4_TRANSLATION(_transform.translation);
+	scale_matrix = MAT4X4_UNIFORM_SCALE(1);
+	rotation_x_matrix = MAT4X4_ROTATION_X(_transform.rotation.x);
+	rotation_y_matrix = MAT4X4_ROTATION_Y(_transform.rotation.y);
+	rotation_z_matrix = MAT4X4_ROTATION_Z(_transform.rotation.z);
+	rotation_matrix = rotation_z_matrix * rotation_y_matrix * rotation_x_matrix;
+	transformation = translation_matrix * rotation_matrix * scale_matrix;
+
+	return (transformation);
 }
 
 Transform &Mesh::getTransform()
@@ -380,7 +398,4 @@ Mesh::~Mesh()
 	glDeleteVertexArrays(1, &_VAO);
 	glDeleteBuffers(1, &_VBO);
 	glDeleteBuffers(1, &_EBO);
-	
-	std::cout
-		<< "Destructor called for class Mesh" << std::endl;
 }

@@ -1,8 +1,9 @@
 # pragma once
 
-# include <scop.hpp>
-
 # include <iostream>
+# include "define.hpp"
+# include "structs.hpp"
+# include "prototype.hpp"
 
 // Could add inFormat and outFormat to deal with RGBA
 typedef struct textureData {
