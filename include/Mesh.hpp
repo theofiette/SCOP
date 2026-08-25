@@ -35,7 +35,6 @@ class Mesh
 		// Mesh alterating functions
 		void	_colorFacesGrey(std::vector<Vertex> &vertices) const;
 		void	_colorFacesFun(std::vector<Vertex> &vertices) const;
-		void	_textureFaces(std::vector<Vertex> &vertices) const;
 		void	_setOriginAtCenter(std::vector<Vertex> &vertices) const;
 
 		Mesh() = delete;								//Default constructor

@@ -8,6 +8,10 @@ struct vec2 {
 	T	x;
 	T	y;
 
+
+	vec2() : x{0}, y{0} {};
+	vec2(T _x, T _y) : x{_x}, y{_y} {};
+
 	bool operator==(const vec2 &other) const {
 		return (
 		x == other.x &&
@@ -47,6 +51,14 @@ struct vec3
 	vec3() : x{0}, y{0}, z{0} {};
 
 	vec3(T _x, T _y, T _z) : x{_x}, y{_y}, z{_z} {};
+
+	vec3	operator/(const float unit) const {
+		return (vec3(x / unit, y / unit, z / unit));
+	}
+
+	vec3	operator-(const vec3 other) const {
+		return (vec3(x - other.x, y - other.y, z - other.z));
+	}
 
 	bool operator==(const vec3 &other) const {
 		return (
@@ -191,6 +203,25 @@ struct Vertex {
 	// Vertex(Vertex &other) : position{other.position}, texture{other.texture}, normal{other.normal}, color{other.color} {};
 };
 
+struct Face {
+
+	Vertex a;
+	Vertex b;
+	Vertex c;
+
+	Vertex	&operator[](int index) {
+		switch (index) {
+			case (0):
+				return (a);
+			case (1):
+				return (b);
+			case (2):
+				return (c);
+			default:
+				throw (std::out_of_range("Face invalid index"));
+		}
+	}
+};
 
 // ------------------------------------------------------------
 

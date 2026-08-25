@@ -190,12 +190,60 @@ void	Mesh::_colorFacesFun(std::vector<Vertex> &vertices) const
 	
 }
 
-void	Mesh::_textureFaces(std::vector<Vertex> &vertices) const
+vec3<float> normalize(const vec3<float> &vec)
 {
-	for (Vertex &vert : vertices)
+	float len = std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+
+	if (!len)
+		return (vec3<float>(0.0f, 0.0f, 0.0f));
+	return (vec / len);
+}
+
+vec3<float> cross(const vec3<float> &a, const vec3<float> &b)
+{
+	return (vec3<float>(
+		a.y * b.z - a.z * b.y,
+		a.z * b.x - a.x * b.z,
+		a.x * b.y - a.y * b.x
+	));
+}
+
+vec3<float> calculateNormal(Face &face)
+{
+	vec3<float> edge1, edge2;
+
+	edge1 = face[1].position - face[0].position;
+	edge2 = face[2].position - face[0].position;
+
+	return (normalize(cross(edge1, edge2)));
+}
+
+void	_textureFace(Face &face)
+{
+	vec3<float> normal = calculateNormal(face);
+
+	for (int i = 0; i < 3; i++)
 	{
-		vert.texture.x = vert.position.x;
-		vert.texture.y = vert.position.y;
+		Vertex *vert = &face[i];
+
+		if (fabs(normal.x) >= fabs(normal.y) && fabs(normal.x) >= fabs(normal.z))
+		{
+			std::cout << "AXIS X" << std::endl;
+			vert->texture = vec2<float>(vert->position.z, vert->position.y);
+			vert->color = vec3(1.0f, 0.0f, 0.0f);
+		}
+		else if (fabs(normal.y) >= fabs(normal.x) && fabs(normal.y) >= fabs(normal.z))
+		{
+			std::cout << "AXIS Y" << std::endl;
+			vert->texture = vec2<float>(vert->position.x, vert->position.z);
+			vert->color = vec3(0.0f, 1.0f, 0.0f);
+		}
+		else
+		{
+			std::cout << "AXIS Z" << std::endl;
+			vert->texture = vec2<float>(vert->position.x, vert->position.y);
+			vert->color = vec3(0.0f, 0.0f, 1.0f);
+		}
 	}
 }
 
@@ -262,28 +310,38 @@ void	Mesh::_setOriginAtCenter(std::vector<Vertex> &vertices) const
 void	Mesh::_generateVerticesBuffer(
 	const objFileData &data, std::vector<Vertex> &vertices, std::vector<vec3<unsigned int>> &indexes) const
 {
-	vec3<unsigned int>		index;
+	vec3<unsigned int>							index;
 	std::unordered_map<Vertex, int, VertexHash>	verticesMap;
-	unsigned int			currIndex = 0;
+	unsigned int								currIndex = 0;
 
-	for (const FaceIndexes &face : data.indexes)
+	for (const FaceIndexes &faceIndex : data.indexes)
 	{
 		index = {};
+		Face face = {};
 
 		for (unsigned int i = 0; i < 3; i++)
 		{
 			Vertex vertex = {};
-			unsigned int coordIndex = face.positionIndex[i];
+			unsigned int coordIndex = faceIndex.positionIndex[i];
 			
 			vertex.position = data.positions[coordIndex];
 			if (data.multiIndex)
 			{
-				unsigned int textureIndex = face.textureIndex[i];
-				unsigned int normalIndex = face.normalIndex[i];
+				unsigned int textureIndex = faceIndex.textureIndex[i];
+				unsigned int normalIndex = faceIndex.normalIndex[i];
 
 				vertex.texture = data.textures[textureIndex];
 				vertex.normal = data.normals[normalIndex];
 			}
+			face[i] = vertex;
+		}
+
+		if (!data.multiIndex)
+			_textureFace(face);
+
+		for (unsigned int i = 0; i < 3; i++)
+		{
+			Vertex vertex = face[i];
 
 			std::unordered_map<Vertex, int, VertexHash>::iterator ite = verticesMap.find(vertex);
 			if (ite == verticesMap.end())
@@ -299,8 +357,6 @@ void	Mesh::_generateVerticesBuffer(
 		}
 		indexes.push_back(index);
 	}
-	if (!data.multiIndex)
-		_textureFaces(vertices);
 	_colorFacesGrey(vertices);
 	_setOriginAtCenter(vertices);
 }
