@@ -90,16 +90,33 @@ void _processTransformationInputs(GLFWwindow *window, Transform &transform, floa
 
 void _processRenderInputs(GLFWwindow *window)
 {
+	registre *windowContext;
 	static bool	shaderSwitchKeyHold = false;
+	static bool normalSwitchKeyHold = false;
+
+	windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
+
+	if (glfwGetKey(window, GLFW_KEY_BACKSLASH) == GLFW_PRESS)
+	{
+		if (normalSwitchKeyHold)
+			return;
+		windowContext->normalToggle = true;
+		normalSwitchKeyHold = true;
+	}
+	else if (normalSwitchKeyHold)
+		normalSwitchKeyHold = false;
 
 	if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS)
 	{
-		if (shaderSwitchKeyHold)
+		if (shaderSwitchKeyHold || windowContext->textureToggle)
 			return;
 		shaderSwitchKeyHold = true;
 
-		registre *windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
 		windowContext->textureToggle = !windowContext->textureToggle;
+		if (windowContext->texDisplay == COLOR)
+			windowContext->texDisplay = TEXTURE;
+		else
+			windowContext->texDisplay = COLOR;
 	}
 	else if (shaderSwitchKeyHold)
 		shaderSwitchKeyHold = false;

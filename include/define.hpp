@@ -18,11 +18,17 @@
 
 # define BACKGROUND_COLOR 0.2, 0.2, 0.2, 1.0
 
+# define TEXTURE_STEP 0.02f
+
 // Shaders
-# define TEXTURE_SHADER_VERT	"src/SHADERS/shader_texture.vert"
-# define TEXTURE_SHADER_FRAG	"src/SHADERS/shader_texture.frag"
-# define COLOR_SHADER_VERT		"src/SHADERS/shader_color.vert"
-# define COLOR_SHADER_FRAG		"src/SHADERS/shader_color.frag"
+
+# define SHADER_VERT "src/SHADERS/shader.vert"
+# define SHADER_FRAG "src/SHADERS/shader.frag"
+
+// # define TEXTURE_SHADER_VERT	"src/SHADERS/shader_texture.vert"
+// # define TEXTURE_SHADER_FRAG	"src/SHADERS/shader_texture.frag"
+// # define COLOR_SHADER_VERT		"src/SHADERS/shader_color.vert"
+// # define COLOR_SHADER_FRAG		"src/SHADERS/shader_color.frag"
 
 // Texture
 # define BASIC_TEXTURE_PATH		"resources/textures/dog.tga"

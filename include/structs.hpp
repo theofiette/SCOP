@@ -191,16 +191,16 @@ struct Vertex {
 	vec2<float>	texture;
 	vec3<float>	normal;
 	vec3<float>	color;
+	vec3<float>	normalColor;
 
 	bool operator==(const Vertex &other) const {
 		return (
 			position == other.position &&
 			texture == other.texture &&
 			normal == other.normal &&
-			color == other.color
+			color == other.color &&
+			normalColor == other.normalColor
 		);}
-	
-	// Vertex(Vertex &other) : position{other.position}, texture{other.texture}, normal{other.normal}, color{other.color} {};
 };
 
 struct Face {
@@ -286,10 +286,16 @@ struct objFileData {
 
 };
 
+enum textureDisplay {COLOR, TEXTURE};
+enum colorDisplay	{GREY, NORMAL};
+
 // The variables carried through the code
 // Used when user input cannot be processed right away
 struct registre {
-	int		zMarker;
-	bool	shaderSwitch;
-	bool	textureToggle;
+	int				zMarker;
+	textureDisplay	texDisplay;
+	bool			textureToggle;
+	float			textureCoef;
+	colorDisplay	colDisplay;
+	bool			normalToggle;
 };

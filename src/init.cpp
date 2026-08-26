@@ -38,5 +38,6 @@ void init(int argc, GLFWwindow** window_ptr, registre *registrePtr) {
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
+	registrePtr->textureCoef = 1.0f;
 	glfwSetWindowUserPointer(*window_ptr, static_cast<void *>(registrePtr));
 }

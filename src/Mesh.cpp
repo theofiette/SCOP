@@ -218,7 +218,7 @@ vec3<float> calculateNormal(Face &face)
 	return (normalize(cross(edge1, edge2)));
 }
 
-void	_textureFace(Face &face)
+void	_applyNormalColor(Face &face, bool projectTexture)
 {
 	vec3<float> normal = calculateNormal(face);
 
@@ -228,21 +228,21 @@ void	_textureFace(Face &face)
 
 		if (fabs(normal.x) >= fabs(normal.y) && fabs(normal.x) >= fabs(normal.z))
 		{
-			std::cout << "AXIS X" << std::endl;
-			vert->texture = vec2<float>(vert->position.z, vert->position.y);
-			vert->color = vec3(1.0f, 0.0f, 0.0f);
+			if (projectTexture)
+				vert->texture = vec2<float>(vert->position.z, vert->position.y);
+			vert->normalColor = vec3(1.0f, 0.0f, 0.0f);
 		}
 		else if (fabs(normal.y) >= fabs(normal.x) && fabs(normal.y) >= fabs(normal.z))
 		{
-			std::cout << "AXIS Y" << std::endl;
-			vert->texture = vec2<float>(vert->position.x, vert->position.z);
-			vert->color = vec3(0.0f, 1.0f, 0.0f);
+			if (projectTexture)
+				vert->texture = vec2<float>(vert->position.x, vert->position.z);
+			vert->normalColor = vec3(0.0f, 1.0f, 0.0f);
 		}
 		else
 		{
-			std::cout << "AXIS Z" << std::endl;
-			vert->texture = vec2<float>(vert->position.x, vert->position.y);
-			vert->color = vec3(0.0f, 0.0f, 1.0f);
+			if (projectTexture)
+				vert->texture = vec2<float>(vert->position.x, vert->position.y);
+			vert->normalColor = vec3(0.0f, 0.0f, 1.0f);
 		}
 	}
 }
@@ -336,8 +336,7 @@ void	Mesh::_generateVerticesBuffer(
 			face[i] = vertex;
 		}
 
-		if (!data.multiIndex)
-			_textureFace(face);
+		_applyNormalColor(face, !data.multiIndex);
 
 		for (unsigned int i = 0; i < 3; i++)
 		{
@@ -406,6 +405,9 @@ _transform(vec3<float>(0.0, 0.0, -5.0), vec3<float>(0.0, 0.0, 0.0), vec3<float>(
 	// layout 3 -> color
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, color));
 	glEnableVertexAttribArray(3);
+	// layout 4 -> normalColor
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normalColor));
+	glEnableVertexAttribArray(4);
 }
 
 mat4x4	Mesh::constructTransformationMatrix() const

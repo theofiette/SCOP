@@ -9,8 +9,9 @@ class Material
 	private:
 
 		Texture		_texture;
-		Shader		_textureShader;
-		Shader		_colorShader;		
+		Shader		_shader;
+		// Shader		_textureShader;
+		// Shader		_colorShader;		
 
 		// Deleted functions --------------------------------------
 
@@ -23,8 +24,9 @@ class Material
 	public:
 
 		Texture		&getTexture();
-		Shader		&getTextureShader();
-		Shader		&getColorShader();
+		Shader		&getShader();
+		// Shader		&getTextureShader();
+		// Shader		&getColorShader();
 
 					Material(const char *texturePath);
 		virtual 	~Material();
