@@ -16,7 +16,7 @@ class Camera
 
 	public:
 
-		mat4x4 &getProjectionMatrix();
+		const mat4x4 &getProjectionMatrix() const;
 
 		// Orthodox Canonical Form
 					Camera(); 						

@@ -8,6 +8,7 @@
 # include <unordered_map>
 # include "define.hpp"
 # include "structs.hpp"
+# include "prototype.hpp"
 
 class Mesh
 {

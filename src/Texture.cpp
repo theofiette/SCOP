@@ -33,22 +33,6 @@ Texture::Texture(const char* path, bool flip)
 	_initTextureParameter();
 }
 
-void printTgaHeader(t_tgaHeader *header)
-{
-    printf("idLength: %d\n", (unsigned char)header->idLength);
-    printf("colourMapType: %d\n", (unsigned char)header->colourMapType);
-    printf("dataTypeCode: %d\n", (unsigned char)header->dataTypeCode);
-    printf("colourMapOrigin: %u\n", header->colourMapOrigin);
-    printf("colourMapLength: %u\n", header->colourMapLength);
-    printf("colourMapDepth: %d\n", (unsigned char)header->colourMapDepth);
-    printf("xOrigin: %u\n", header->xOrigin);
-    printf("yOrigin: %u\n", header->yOrigin);
-    printf("width: %u\n", header->width);
-    printf("height: %u\n", header->height);
-    printf("bitsPerPixel: %d\n", (unsigned char)header->bitsPerPixel);
-    printf("imageDescriptor: %d\n", (unsigned char)header->imageDescriptor);
-}
-
 void _parseTgaHeader(const char *content, textureData &texture)
 {
 	tgaHeader		header = *(reinterpret_cast<const tgaHeader *>(content));
@@ -59,7 +43,7 @@ void _parseTgaHeader(const char *content, textureData &texture)
 	if (texture.inFormat != 3 && texture.inFormat != 4) // If not RGB neither RGBA
 	{
 		std::cout << "ERROR::TEXTURE::INVALID_CHANNELS_NUMBER" << std::endl;
-		clean_exit(true, 1);
+		clean_exit(true, 7);
 	}
 
 	// dimensions
@@ -114,6 +98,10 @@ textureData		Texture::_loadTexture(const char* path, bool flip) const
 	if (extension == ".tga") {
 
 		_parseTga(textureContent.c_str(), texture, flip);
+	}
+	else
+	{
+		clean_exit(true, 6);
 	}
 
 	return (texture);

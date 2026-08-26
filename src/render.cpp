@@ -1,11 +1,7 @@
 #include "scop.hpp"
 
-void _applyTexture(GLFWwindow* window, Shader &shader)
+void _updateShaderColor(registre *windowContext, Shader &shader)
 {
-	registre	*windowContext;
-
-	windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
-
 	if (windowContext->normalToggle)
 	{
 		if (windowContext->colDisplay == GREY)
@@ -20,7 +16,10 @@ void _applyTexture(GLFWwindow* window, Shader &shader)
 		}
 		windowContext->normalToggle = false;
 	}
+}
 
+void _updateShaderTexture(registre *windowContext, Shader &shader)
+{
 	if (windowContext->textureToggle)
 	{
 		if (windowContext->texDisplay == COLOR)
@@ -32,14 +31,28 @@ void _applyTexture(GLFWwindow* window, Shader &shader)
 			windowContext->textureToggle = false;
 	}
 	shader.setUniform<float>("texCoef", windowContext->textureCoef);
-	// shader.setUniform<float>("normalDisplay", windowContext->);
+}
+
+void _shaderUpdate(
+	GLFWwindow* window, Shader &shader, mat4x4 &transformation, mat4x4 &projection)
+{
+	registre	*windowContext;
+
+	windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
+
+	shader.use();
+	shader.setUniform<float[16]>("projection", projection.m);
+	shader.setUniform<float[16]>("transformation", transformation.m);
+
+	_updateShaderColor(windowContext, shader);
+	_updateShaderTexture(windowContext, shader);
 }
 
 /*
 *	The process function responsible for rendering.
 *	Called every frame.
 */
-void _processRender(GLFWwindow* window, Camera &camera, Mesh &mesh, Material &material)
+void _processRender(GLFWwindow* window, const Camera &camera, const Mesh &mesh, Material &material)
 {
 	Shader		*shader;
 	mat4x4		transformation, projection;
@@ -51,11 +64,7 @@ void _processRender(GLFWwindow* window, Camera &camera, Mesh &mesh, Material &ma
 	projection = camera.getProjectionMatrix();
 	shader = &material.getShader();
 
-	_applyTexture(window, *shader);
-
-	shader->use();
-	shader->setUniform<float[16]>("projection", projection.m);
-	shader->setUniform<float[16]>("transformation", transformation.m);
+	_shaderUpdate(window, *shader, transformation, projection);
 
 	mesh.draw();
 

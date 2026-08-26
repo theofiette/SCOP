@@ -15,7 +15,7 @@ void	Camera::_setProjectionMatrix()
 
 }
 
-mat4x4	&Camera::getProjectionMatrix()
+const mat4x4	&Camera::getProjectionMatrix() const
 {
 	return (_projection);
 }

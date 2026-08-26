@@ -140,8 +140,10 @@ void Mesh::_parseFile(const char* objFile, objFileData &data) const
 		{"f",	&Mesh::_parseIndex}
 	};
 
-	std::vector<std::string>	fileContent = fileLoader::toStringVector(objFile);
+	if (fileLoader::getExtension(objFile) != ".obj")
+		clean_exit(true, 8);
 
+	std::vector<std::string>	fileContent = fileLoader::toStringVector(objFile);
 
 	for (const std::string &line : fileContent)
 	{

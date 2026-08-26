@@ -43,7 +43,7 @@ void Shader::_checkShaderCompil(unsigned int shaderID) const
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
 		std::cerr << "ERROR::SHADER::COMPILATION::FAILED\n" << infoLog << std::endl;
 		
-		clean_exit(true, 1);
+		clean_exit(true, 4);
 	}
 }
 
@@ -59,7 +59,7 @@ void Shader::_checkProgramLink(unsigned int programID) const
 		glGetProgramInfoLog(programID, 512, NULL, infoLog);
 		std::cerr << "ERROR::SHADER::LINKAGE::FAILED\n" << infoLog << std::endl;
 		
-		clean_exit(true, 1);
+		clean_exit(true, 5);
 	}
 }
 

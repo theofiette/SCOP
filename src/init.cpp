@@ -10,11 +10,11 @@ GLFWwindow* instantiate_window()
 
 	window = glfwCreateWindow(WIDTH, HEIGHT, "SCOP", NULL, NULL);
 	if (window == NULL)
-		clean_exit(true, 1);
+		clean_exit(true, 2);
 
 	glfwMakeContextCurrent(window);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		clean_exit(true, 1); 
+		clean_exit(true, 3); 
 
 	return (window);
 }
@@ -24,7 +24,7 @@ void init(int argc, GLFWwindow** window_ptr, registre *registrePtr) {
 	if (argc != 2 && argc != 3)
 	{
 		std::cerr << "usage : [programme] [.obj file path] (.tga file path)" << std::endl;
-		clean_exit(false, 1);
+		clean_exit(false, 0);
 	}
 
 	if (!glfwInit())
