@@ -42,5 +42,6 @@
 # define ERR_CODE_6 "Invalid texture format"
 # define ERR_CODE_7 "Invalid texture channels"
 # define ERR_CODE_8 "Invalid object format"
+# define ERR_CODE_9 "fileLoader could not open or read file"
 
 #endif

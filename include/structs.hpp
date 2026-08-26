@@ -1,6 +1,7 @@
 #pragma once
 
 # include "opengl.hpp"
+# include <ostream>
 # include <vector>
 
 template <typename T>
@@ -99,7 +100,6 @@ struct vec3
 		return (os);
 	}
 };
-
 
 typedef union mat4x4 {
 
@@ -282,7 +282,8 @@ struct objFileData {
 	//Faces
 	std::vector<FaceIndexes>	indexes;
 	//Are there texture and normal coordinates ?
-	bool						multiIndex;
+	bool						textureIndex;
+	bool						normalIndex;
 
 };
 

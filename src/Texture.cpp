@@ -28,7 +28,7 @@ Texture::Texture(const char* path, bool flip)
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	if (texture.data)
-		delete texture.data;
+		delete  [] texture.data;
 	
 	_initTextureParameter();
 }

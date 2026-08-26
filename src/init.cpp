@@ -35,7 +35,7 @@ void init(int argc, GLFWwindow** window_ptr, registre *registrePtr) {
 	glfwSetScrollCallback(*window_ptr, _onScroll);
 
 	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
-	glEnable(GL_CULL_FACE);
+	// glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
 	registrePtr->textureCoef = 1.0f;

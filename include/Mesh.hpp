@@ -10,6 +10,9 @@
 # include "structs.hpp"
 # include "prototype.hpp"
 
+# include "fileLoader.hpp"
+# include "vectorMath.hpp"
+
 class Mesh
 {
 	private:
@@ -34,9 +37,10 @@ class Mesh
 		void	_parseIndex(const std::string &line, objFileData &data) const;
 
 		// Mesh alterating functions
-		void	_colorFacesGrey(std::vector<Vertex> &vertices) const;
-		void	_colorFacesFun(std::vector<Vertex> &vertices) const;
-		void	_setOriginAtCenter(std::vector<Vertex> &vertices) const;
+		void		_colorFacesGrey(std::vector<Vertex> &vertices) const;
+		void		_applyNormalColor(Face &face, bool projectTexture) const;
+		vec3<float> _calculateNormal(Face &face) const;
+		void		_setOriginAtCenter(std::vector<Vertex> &vertices) const;
 
 		Mesh() = delete;								//Default constructor
 		Mesh	&operator=(const Mesh &other) = delete;	//Assignment operator

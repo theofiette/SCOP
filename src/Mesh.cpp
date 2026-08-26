@@ -1,6 +1,5 @@
 
 #include "Mesh.hpp"
-#include "fileLoader.hpp"
 
 /*
 *	This function parse a vertice line in a .obj file and fill a position vec3 in the mesh data
@@ -43,7 +42,7 @@ void Mesh::_parseVertexTexture(const std::string &line, objFileData &data) const
 		stream >> f;
 		textureCoord[i] = f;
 	}
-	data.multiIndex = true;
+	data.textureIndex = true;
 	data.textures.push_back(textureCoord);
 }
 
@@ -66,7 +65,7 @@ void Mesh::_parseVertexNormal(const std::string &line, objFileData &data) const 
 		stream >> f;
 		normalCoord[i] = f;
 	}
-	data.multiIndex = true;
+	data.normalIndex = true;
 	data.normals.push_back(normalCoord);
 }
 
@@ -105,8 +104,7 @@ void Mesh::_parseIndex(const std::string &line, objFileData &data) const {
 	data.indexes.push_back(index);
 
 	// 4th position -> splitting the quad
-	stream >> token;
-	if (stream.peek() != -1)
+	if (stream >> token)
 	{
 		index.positionIndex.y = index.positionIndex.x;
 		index.normalIndex.y = index.normalIndex.x;
@@ -128,10 +126,10 @@ void Mesh::_parseIndex(const std::string &line, objFileData &data) const {
 	}
 }
 
-using ParseFunc = void (Mesh::*)(const std::string&, objFileData&) const;
 
 void Mesh::_parseFile(const char* objFile, objFileData &data) const
 {
+	using ParseFunc = void (Mesh::*)(const std::string&, objFileData&) const;
 
 	static const std::map<std::string, ParseFunc>	parseMap = {
 		{"v",	&Mesh::_parseVertexCoordinate},
@@ -176,53 +174,19 @@ void	Mesh::_colorFacesGrey(std::vector<Vertex> &vertices) const
 	}
 }
 
-void	Mesh::_colorFacesFun(std::vector<Vertex> &vertices) const
-{
-
-	vec3<float> color;
-
-	for (Vertex &vert : vertices)
-	{
-		color.x = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
-		color.y = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
-		color.z = 0.5 + static_cast<float>(std::experimental::randint(-1, 1)) / 10.0f;
-
-		vert.color = color;
-	}
-	
-}
-
-vec3<float> normalize(const vec3<float> &vec)
-{
-	float len = std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
-
-	if (!len)
-		return (vec3<float>(0.0f, 0.0f, 0.0f));
-	return (vec / len);
-}
-
-vec3<float> cross(const vec3<float> &a, const vec3<float> &b)
-{
-	return (vec3<float>(
-		a.y * b.z - a.z * b.y,
-		a.z * b.x - a.x * b.z,
-		a.x * b.y - a.y * b.x
-	));
-}
-
-vec3<float> calculateNormal(Face &face)
+vec3<float> Mesh::_calculateNormal(Face &face) const
 {
 	vec3<float> edge1, edge2;
 
 	edge1 = face[1].position - face[0].position;
 	edge2 = face[2].position - face[0].position;
 
-	return (normalize(cross(edge1, edge2)));
+	return (vectorMath::normalize(vectorMath::cross(edge1, edge2)));
 }
 
-void	_applyNormalColor(Face &face, bool projectTexture)
+void	Mesh::_applyNormalColor(Face &face, bool projectTexture) const
 {
-	vec3<float> normal = calculateNormal(face);
+	vec3<float> normal = _calculateNormal(face);
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -324,21 +288,24 @@ void	Mesh::_generateVerticesBuffer(
 		for (unsigned int i = 0; i < 3; i++)
 		{
 			Vertex vertex = {};
+
 			unsigned int coordIndex = faceIndex.positionIndex[i];
-			
 			vertex.position = data.positions[coordIndex];
-			if (data.multiIndex)
+
+			if (data.textureIndex)
 			{
 				unsigned int textureIndex = faceIndex.textureIndex[i];
-				unsigned int normalIndex = faceIndex.normalIndex[i];
-
 				vertex.texture = data.textures[textureIndex];
+			}
+			if (data.normalIndex)
+			{
+				unsigned int normalIndex = faceIndex.normalIndex[i];
 				vertex.normal = data.normals[normalIndex];
 			}
 			face[i] = vertex;
 		}
 
-		_applyNormalColor(face, !data.multiIndex);
+		_applyNormalColor(face, !data.textureIndex);
 
 		for (unsigned int i = 0; i < 3; i++)
 		{
@@ -372,12 +339,13 @@ Mesh::Mesh(const char* objFile) :
 _transform(vec3<float>(0.0, 0.0, -5.0), vec3<float>(0.0, 0.0, 0.0), vec3<float>(1.0, 1.0, 1.0))
 {
 	// in data (parsed in file)
-	objFileData			data = {};
+	objFileData						data = {};
 	// out data (reconstructed for element buffer)
 	std::vector<Vertex>				vertices;
-	std::vector<vec3<unsigned int>>	indexes; // 3 index de vertex par face 
+	std::vector<vec3<unsigned int>>	indexes; 
 
-	data.multiIndex = false;
+	data.textureIndex = false;
+	data.normalIndex = false;
 	_parseFile(objFile, data);
 	_generateVerticesBuffer(data, vertices, indexes);
 
@@ -393,7 +361,7 @@ _transform(vec3<float>(0.0, 0.0, -5.0), vec3<float>(0.0, 0.0, 0.0), vec3<float>(
 
 	glGenBuffers(1, &_EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indexCount * sizeof(vec3<int>), indexes.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indexCount * sizeof(vec3<unsigned int>), indexes.data(), GL_STATIC_DRAW);
 
 	// layout 0 -> position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));

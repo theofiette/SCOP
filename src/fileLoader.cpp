@@ -24,7 +24,7 @@ namespace fileLoader {
 		catch (std::ifstream::failure &e) {
 
 			std::cout << "ERROR::FILELOADER::FILE_NOT_SUCCESFULLY_READ(toString)" << std::endl;
-			clean_exit(true, 1);
+			clean_exit(true, 9);
 
 		}
 		return (str);

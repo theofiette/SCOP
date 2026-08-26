@@ -18,7 +18,10 @@ int clean_exit(bool should_glfwTerminate, int exit_code)
 		case 6 : error_str = ERR_CODE_6; break;
 		case 7 : error_str = ERR_CODE_7; break;
 		case 8 : error_str = ERR_CODE_8; break;
-		default : error_str = ERR_CODE_DEFAULT; break;
+		case 9 : error_str = ERR_CODE_9; break;
+		
+		default : error_str = ERR_CODE_DEFAULT;
+		
 	}
 	
 	throw std::runtime_error(error_str);
