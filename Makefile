@@ -2,26 +2,26 @@ NAME= SCOP
 COMP= c++
 CFLAGS= -Wall -Wextra -Werror -g
 LDFLAGS= -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
-INCLUDES= -Iinclude
+INCLUDES= -Iinclude -Ithird-party
 BUILD= .build/
 
-CPPSRC =	src/main.cpp \
-			src/exit.cpp \
-			src/fileLoader.cpp \
-			src/init.cpp \
-			src/inputs.cpp \
-			src/render.cpp \
-			src/vectorMath.cpp \
-			src/Camera.cpp \
-			src/Mesh.cpp \
-			src/Material.cpp \
-			src/Shader.cpp \
-			src/Texture.cpp 
-			
-CSRC   = src/glad.c
+EXTSRC =	third-party/glad/glad.c
 
+CPPSRC =	src/core/exit.cpp \
+			src/core/init.cpp \
+			src/core/main.cpp \
+			src/input/inputs.cpp \
+			src/loader/fileLoader.cpp \
+			src/math/vectorMath.cpp \
+			src/mesh/Mesh.cpp \
+			src/render/render.cpp \
+			src/render/Camera.cpp \
+			src/render/Material.cpp \
+			src/render/Shader.cpp \
+			src/render/Texture.cpp 
+			
 OBJS = $(addprefix $(BUILD), $(CPPSRC:.cpp=.o)) \
-       $(addprefix $(BUILD), $(CSRC:.c=.o))
+       $(addprefix $(BUILD), $(EXTSRC:.c=.o))
 
 all: $(NAME)
 

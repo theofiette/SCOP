@@ -1,0 +1,145 @@
+#include "core/scop.hpp"
+
+void _onWindowResize(GLFWwindow* window, int width, int height) {
+
+	(void)window;
+	glViewport(0, 0, width, height);
+}
+
+/*
+*	The function responsible to catch a user scroll input.
+*	Due to the functionnement of GLFW, this function isn't called every frame, but in 
+*	reaction to the scroll input
+*/
+void _onScroll(GLFWwindow* window, double x, double y) {
+	
+	registre	*windowContext;
+
+	windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
+	(y > 0 ? windowContext->zMarker++ : windowContext->zMarker--);
+	
+	(void)x;
+}
+
+void _processSensibilityInputs(
+	GLFWwindow* window, float &sensi, bool &sensiOnRotation)
+{
+	static bool		sensiRotationKeyHold = false;
+	static bool		sensiVariationKeyHold = false;
+	int 			inputAxis = 0;
+
+	if (glfwGetKey(window, GLFW_KEY_KP_MULTIPLY) == GLFW_PRESS)
+	{
+		if (!sensiRotationKeyHold)
+		{
+			sensiOnRotation = !sensiOnRotation;
+			sensiRotationKeyHold = true;
+		}
+	}
+	else if (sensiRotationKeyHold)
+		sensiRotationKeyHold = false;
+
+	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS
+		|| glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
+	{
+		if (!sensiVariationKeyHold)
+		{
+			if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
+				inputAxis += 1;
+			if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
+				inputAxis -= 1;	
+			sensi = std::clamp(sensi + (inputAxis * SENSIVITY_STEP), SENSIVITY_MIN, SENSIVITY_MAX);
+		}
+	}
+	else if (sensiVariationKeyHold) sensiVariationKeyHold = false;
+}
+
+void _processTransformationInputs(GLFWwindow *window, Transform &transform, float sensi, bool sensiOnRotation)
+{
+	float rotationStep = SENSI_BASE * sensi / 4.0f;
+	float translationStep = SENSI_BASE * sensi;
+
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		transform.translation.y += translationStep;	
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		transform.translation.y -= translationStep;
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		transform.translation.x -= translationStep;
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		transform.translation.x += translationStep;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		transform.rotation.x += sensiOnRotation ? rotationStep : 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		transform.rotation.x -= sensiOnRotation ? rotationStep : 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		transform.rotation.z -= sensiOnRotation ? rotationStep : 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		transform.rotation.z += sensiOnRotation ? rotationStep : 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		transform.rotation.y -= sensiOnRotation ? rotationStep : 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		transform.rotation.y += sensiOnRotation ? rotationStep : 0.1f;
+	
+	registre *windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
+	if (windowContext->zMarker)
+	{
+		transform.translation.z += SENSI_BASE * sensi * windowContext->zMarker;
+		windowContext->zMarker = 0;
+	}
+}
+
+void _processRenderInputs(GLFWwindow *window)
+{
+	registre *windowContext;
+	static bool	shaderSwitchKeyHold = false;
+	static bool normalSwitchKeyHold = false;
+
+	windowContext = static_cast<registre *>(glfwGetWindowUserPointer(window));
+
+	if (glfwGetKey(window, GLFW_KEY_BACKSLASH) == GLFW_PRESS)
+	{
+		if (normalSwitchKeyHold)
+			return;
+		windowContext->normalToggle = true;
+		normalSwitchKeyHold = true;
+	}
+	else if (normalSwitchKeyHold)
+		normalSwitchKeyHold = false;
+
+	if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS)
+	{
+		if (shaderSwitchKeyHold || windowContext->textureToggle)
+			return;
+		shaderSwitchKeyHold = true;
+
+		windowContext->textureToggle = !windowContext->textureToggle;
+		if (windowContext->texDisplay == COLOR)
+			windowContext->texDisplay = TEXTURE;
+		else
+			windowContext->texDisplay = COLOR;
+	}
+	else if (shaderSwitchKeyHold)
+		shaderSwitchKeyHold = false;
+}
+
+/*
+*	The process function responsible of reacting to user inputs.
+*	Called every frame.
+*/
+void _processInputs(
+	GLFWwindow* window, Transform &transform) {
+
+	static float	sensi = 0.5f;
+	static bool		sensiOnRotation = false;
+
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, true);
+		return ;
+	}
+
+	_processRenderInputs(window);
+	_processSensibilityInputs(window, sensi, sensiOnRotation);
+	_processTransformationInputs(window, transform, sensi, sensiOnRotation);
+}
+
