@@ -46,8 +46,8 @@ This project is fulfilling all the requirements from the subject (and more), but
 - `make`
 - `./SCOP resources/models/duck.obj resources/textures/duck.tga`
 
--*the model file has to be a .obj*
--*the texture file is optional, and has to be a .tga*
+*the model file has to be a .obj*\
+*the texture file is optional, and has to be a .tga*
 
 *controls :*
 
