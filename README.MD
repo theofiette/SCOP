@@ -11,28 +11,28 @@ This project is fulfilling all the requirements from the subject (and more), but
 
 *The project directory tree should be self-explanatory:*
 
-- ├── include
-- │   ├── core
-- │   ├── loader
-- │   ├── math
-- │   ├── mesh
-- │   └── render
-- ├── Makefile
-- ├── README.MD
-- ├── resources
-- │   ├── models
-- │   └── textures
-- ├── SCOP
-- ├── src
-- │   ├── core
-- │   ├── input
-- │   ├── loader
-- │   ├── math
-- │   ├── mesh
-- │   ├── render
-- │   └── shader
-- └── third-party
--     └── glad
+-├── include\
+-│   ├── core\
+-│   ├── loader\
+-│   ├── math\
+-│   ├── mesh\
+-│   └── render\
+-├── Makefile\
+-├── README.MD\
+-├── resources\
+-│   ├── models\
+-│   └── textures\
+-├── SCOP\
+-├── src\
+-│   ├── core\
+-│   ├── input\
+-│   ├── loader\
+-│   ├── math\
+-│   ├── mesh\
+-│   ├── render\
+-│   └── shader\
+-└── third-party\
+-    └── glad
 
 <p float="left">
   <img src="resources/screenshots/duck.png" width="300">
@@ -59,7 +59,7 @@ This project is fulfilling all the requirements from the subject (and more), but
 
 *display*
 - *'* : texture toggle
-- *\'* : untextured display as grey faces / normals toggle
+- *\\* : untextured display as grey faces / normals toggle
 
 **Resources**
 
@@ -71,6 +71,7 @@ More resources :
 - https://www.geeksforgeeks.org/maths/rotation-matrix/
 
 **AI usage**
+
 Since this is a learning project, I tried to use AI in a way that allowed me to make my own mistakes and to learn.
 Basically I designed and coded without it, and used it afterward to point weaknesses in architecture, naming or logic.
 I did use it to generate code once (a hashing function), and this is documented in the file.
