@@ -40,10 +40,9 @@ class Texture
 
 		unsigned int	_ID;
 
-		textureData			_loadTexture(const char* path, bool flip) const;
-		void				_parseTga(const char * content, textureData &texture, bool flip) const;
-
-		void				_initTextureParameter();
+		textureData		_loadTexture(const char* path, bool flip) const;
+		void			_parseTga(const char * content, textureData &texture, bool flip) const;
+		void			_initTextureParameter();
 
 		Texture() = delete;		//Default constructor is not allowed
 		Texture(const Texture &other) = delete;	//Copy constructor is not allowed
