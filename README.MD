@@ -57,7 +57,7 @@ This project is fulfilling all the requirements from the subject (and more), but
 *- +* : increase/decrease movement sensitivity\
 *\** : toggle sensitivity on rotation
 
-*display*
+*display*\
 *'* : texture toggle\
 *\\* : untextured display as grey faces / normals toggle
 
