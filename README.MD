@@ -11,28 +11,28 @@ This project is fulfilling all the requirements from the subject (and more), but
 
 *The project directory tree should be self-explanatory:*
 
--├── include\
--│   ├── core\
--│   ├── loader\
--│   ├── math\
--│   ├── mesh\
--│   └── render\
--├── Makefile\
--├── README.MD\
--├── resources\
--│   ├── models\
--│   └── textures\
--├── SCOP\
--├── src\
--│   ├── core\
--│   ├── input\
--│   ├── loader\
--│   ├── math\
--│   ├── mesh\
--│   ├── render\
--│   └── shader\
--└── third-party\
--    └── glad
+├── include\
+│   ├── core\
+│   ├── loader\
+│   ├── math\
+│   ├── mesh\
+│   └── render\
+├── Makefile\
+├── README.MD\
+├── resources\
+│   ├── models\
+│   └── textures\
+├── SCOP\
+├── src\
+│   ├── core\
+│   ├── input\
+│   ├── loader\
+│   ├── math\
+│   ├── mesh\
+│   ├── render\
+│   └── shader\
+└── third-party\
+    └── glad
 
 <p float="left">
   <img src="resources/screenshots/duck.png" width="300">
@@ -52,14 +52,14 @@ This project is fulfilling all the requirements from the subject (and more), but
 *controls :*
 
 *movements (qwerty)*
-- *← ↑ → ↓ & mouse scroll* : moving the object
-- *a d / w s / q e* : rotating the object
-- *- +* : increase/decrease movement sensitivity
-- *\** : toggle sensitivity on rotation
+*← ↑ → ↓ & mouse scroll* : moving the object\
+*a d / w s / q e* : rotating the object\
+*- +* : increase/decrease movement sensitivity\
+*\** : toggle sensitivity on rotation
 
 *display*
-- *'* : texture toggle
-- *\\* : untextured display as grey faces / normals toggle
+*'* : texture toggle\
+*\\* : untextured display as grey faces / normals toggle
 
 **Resources**
 
