@@ -51,9 +51,9 @@ This project is fulfilling all the requirements from the subject (and more), but
 
 *controls :*
 
-*movements (qwerty)*
+*movements (qwerty)*\
 *← ↑ → ↓ & mouse scroll* : moving the object\
-*a d / w s / q e* : rotating the object\
+*A D / W S / Q E* : rotating the object\
 *- +* : increase/decrease movement sensitivity\
 *\** : toggle sensitivity on rotation
 
