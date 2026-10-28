@@ -43,42 +43,42 @@ typedef union mat4x4 {
 
 } mat4x4;
 
-# define MAT4X4(x)	mat4x4 {	x, x, x, x, \
+# define MAT4X4(x)	mat4x4 {{	x, x, x, x, \
 								x, x, x, x, \
 								x, x, x, x, \
-								x, x, x, x}
+								x, x, x, x}}
 
-# define MAT4X4_IDENTITY	mat4x4 {	1, 0, 0, 0, \
+# define MAT4X4_IDENTITY	mat4x4 {{	1, 0, 0, 0, \
 										0, 1, 0, 0, \
 										0, 0, 1, 0, \
-										0, 0, 0, 1}
+										0, 0, 0, 1}}
 
-# define MAT4X4_UNIFORM_SCALE(x)	mat4x4 {	x, 0, 0, 0, \
+# define MAT4X4_UNIFORM_SCALE(x)	mat4x4 {{	x, 0, 0, 0, \
 												0, x, 0, 0, \
 												0, 0, x, 0, \
-												0, 0, 0, 1	}
+												0, 0, 0, 1	}}
 
-# define MAT4X4_SCALE(vec3)			mat4x4 {	vec3.x, 0, 0, 0, \
+# define MAT4X4_SCALE(vec3)			mat4x4 {{	vec3.x, 0, 0, 0, \
 												0, vec3.y, 0, 0, \
 												0, 0, vec3.z, 0, \
-												0, 0, 0, 1	}											
+												0, 0, 0, 1	}}											
 
-# define MAT4X4_TRANSLATION(vec3)	mat4x4 {	1, 0, 0, vec3.x, \
+# define MAT4X4_TRANSLATION(vec3)	mat4x4 {{	1, 0, 0, vec3.x, \
 												0, 1, 0, vec3.y, \
 												0, 0, 1, vec3.z, \
-												0, 0, 0, 1	}
+												0, 0, 0, 1	}}
 
-# define MAT4X4_ROTATION_X(angle)	mat4x4 {	1, 0, 0, 0, \
+# define MAT4X4_ROTATION_X(angle)	mat4x4 {{	1, 0, 0, 0, \
 												0, cosf(angle), -sinf(angle), 0, \
 												0, sinf(angle), cosf(angle), 0, \
-											 	0, 0, 0, 1	}
+											 	0, 0, 0, 1	}}
 
-# define MAT4X4_ROTATION_Y(angle)	mat4x4 {	cosf(angle), 0, sinf(angle), 0, \
+# define MAT4X4_ROTATION_Y(angle)	mat4x4 {{	cosf(angle), 0, sinf(angle), 0, \
 												0, 1, 0, 0, \
 												-sinf(angle), 0, cosf(angle), 0, \
-												0, 0, 0, 1	}
+												0, 0, 0, 1	}}
 
-# define MAT4X4_ROTATION_Z(angle)	mat4x4 {	cosf(angle), -sinf(angle), 0, 0, \
+# define MAT4X4_ROTATION_Z(angle)	mat4x4 {{	cosf(angle), -sinf(angle), 0, 0, \
 												sinf(angle), cosf(angle), 0, 0, \
 												0, 0, 1, 0, \
-												0, 0, 0, 1	}
+												0, 0, 0, 1	}}
