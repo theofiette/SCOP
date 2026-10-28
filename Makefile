@@ -34,7 +34,7 @@ $(BUILD)%.o: %.cpp
 
 $(BUILD)%.o: %.c
 	@mkdir -p $(dir $@)
-	$(COMP) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	$(RM) -r $(BUILD)

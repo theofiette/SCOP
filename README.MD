@@ -11,27 +11,27 @@ This project is fulfilling all the requirements from the subject (and more), but
 
 *The project directory tree should be self-explanatory:*
 
-├── include
-│   ├── core
-│   ├── loader
-│   ├── math
-│   ├── mesh
-│   └── render
-├── Makefile
-├── README.MD
-├── resources
-│   ├── models
-│   └── textures
-├── SCOP
-├── src
-│   ├── core
-│   ├── input
-│   ├── loader
-│   ├── math
-│   ├── mesh
-│   ├── render
-│   └── shader
-└── third-party
+├── include\
+│   ├── core\
+│   ├── loader\
+│   ├── math\
+│   ├── mesh\
+│   └── render\
+├── Makefile\
+├── README.MD\
+├── resources\
+│   ├── models\
+│   └── textures\
+├── SCOP\
+├── src\
+│   ├── core\
+│   ├── input\
+│   ├── loader\
+│   ├── math\
+│   ├── mesh\
+│   ├── render\
+│   └── shader\
+└── third-party\
     └── glad
 
 <p float="left">
@@ -46,20 +46,20 @@ This project is fulfilling all the requirements from the subject (and more), but
 - `make`
 - `./SCOP resources/models/duck.obj resources/textures/duck.tga`
 
-*the model file has to be a .obj*
+*the model file has to be a .obj*\
 *the texture file is optional, and has to be a .tga*
 
 *controls :*
 
-*movements (qwerty)*
-- *← ↑ → ↓ & mouse scroll* : moving the object
-- *a d / w s / q e* : rotating the object
-- *- +* : increase/decrease movement sensitivity
-- *\** : toggle sensitivity on rotation
+*movements (qwerty)*\
+*← ↑ → ↓ & mouse scroll* : moving the object\
+*A D / W S / Q E* : rotating the object\
+*- +* : increase/decrease movement sensitivity\
+*\** : toggle sensitivity on rotation
 
-*display*
-- *'* : texture toggle
-- *\'* : untextured display as grey faces / normals toggle
+*display*\
+*'* : texture toggle\
+*\\* : untextured display as grey faces / normals toggle
 
 **Resources**
 
@@ -70,7 +70,8 @@ More resources :
 - https://stackoverflow.com/questions/53245632/general-formula-for-perspective-projection-matrix
 - https://www.geeksforgeeks.org/maths/rotation-matrix/
 
-*AI usage*
+**AI usage**
+
 Since this is a learning project, I tried to use AI in a way that allowed me to make my own mistakes and to learn.
 Basically I designed and coded without it, and used it afterward to point weaknesses in architecture, naming or logic.
 I did use it to generate code once (a hashing function), and this is documented in the file.
